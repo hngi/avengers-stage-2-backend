@@ -13,7 +13,7 @@ I am assuming you're in the outer **Authenticated** directory and you've enabled
 1. Proceed to the Django project directory by: `cd Authenticated`
 1. Run `python manage.py migrate` to apply database changes
 1. Run `python manage.py createsuperuser` to be able to access Django admin.(This command should be run only once throughout the lifetime of this project)
-1. Run `python manage.py runserver to start the server`
+1. Run `gunicorn Authenticated.wsgi:application --bind 0.0.0.0:8000` to start the server. We're actually using Gunicorn instead of the default Python server(the `python manage.py runserver` version)
 1. Visit **localhost:8000/admin** or **127.0.0.1:8000/admin** to visit the admin panel.
 
 ## If you're resuming work on the project.
