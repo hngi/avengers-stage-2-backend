@@ -10,10 +10,12 @@ services:
       - KEY=$KEY
       - JWT_SECRET=$JWT_SECRET
       - DB_URL=$DB_URL
+    links:
+      - mongodb
     ports:
       - 3000:3000
-   mongodb:
+  mongodb:
     container_name: mongodb
     image: mongo
     ports: 
-      -27017
+      -27017:27017
