@@ -11,4 +11,4 @@ services:
       - JWT_SECRET=$JWT_SECRET
       - DB_URL=$DB_URL
     ports:
-      - 95:3050
+      - 81:3050
