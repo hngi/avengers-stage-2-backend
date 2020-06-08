@@ -9,4 +9,6 @@ if (!envFound) {
 export default {
   // MongoDB URL connection string
   databaseURL: process.env.DB_URL,
+
+  PORT: process.env.PORT,
 };

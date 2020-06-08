@@ -17,4 +17,4 @@ const user = new Schema({
   salt: String,
 });
 
-export default model("User", user);
+module.exports = model("User", user);

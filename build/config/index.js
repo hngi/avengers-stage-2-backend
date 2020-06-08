@@ -19,6 +19,7 @@ if (!envFound) {
 
 var _default = {
   // MongoDB URL connection string
-  databaseURL: process.env.DB_URL
+  databaseURL: process.env.DB_URL,
+  PORT: process.env.PORT
 };
 exports.default = _default;

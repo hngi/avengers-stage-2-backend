@@ -1,10 +1,10 @@
 import http from "http";
 import app from "./app";
-import dotenv from "dotenv";
-dotenv.config();
+import config from "./config";
 
 const server = http.createServer(app);
+const PORT = config.PORT;
 
-server.listen(process.env.PORT || 3050, () => {
-  console.log(`Server Listening on port ${process.env.PORT}`);
+server.listen(PORT || 3050, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
