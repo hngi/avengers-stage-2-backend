@@ -1,21 +1,17 @@
-version: "3"
+version: "2"
 services:
-  authms:
-    container_name: authms
-    build:
-      context: .
-    env_file: .env
-    environment:
-      - PORT=$PORT
-      - KEY=$KEY
-      - JWT_SECRET=$JWT_SECRET
-      - DB_URL=$DB_URL
-    links:
-      - mongodb
+  app:
+    container_name: avengers-auth-task
+    restart: always
+    build: .
     ports:
-      - 3000:3000
-  mongodb:
-    container_name: mongodb
+      - "3000:3000"
+    links:
+      - mongo
+  mongo:
+    container_name: avengers-mongo
     image: mongo
-    ports: 
-      -27017:27017
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "27017:27017"
