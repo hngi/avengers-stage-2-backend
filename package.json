@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel auth --out-dir build",
     "start": "set NODE_ENV=production && node ./build/index.js",
-    "dev-start": "set NODE_ENV=development && nodemon --exec babel-node server/index.js"
+    "dev-start": "set NODE_ENV=development && nodemon --exec babel-node auth/index.js"
   },
   "keywords": [
     "Docker",
@@ -36,6 +36,7 @@
     "@babel/preset-env": "^7.0.0-rc.1",
     "babel-eslint": "^10.0.1",
     "babel-plugin-import": "^1.13.0",
-    "eslint": "^5.16.0"
+    "eslint": "^5.16.0",
+    "nodemon": "^2.0.4"
   }
 }
