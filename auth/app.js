@@ -25,6 +25,10 @@ app.use(express.json());
 
 app.use("/api", routes);
 
+//Proposed Registration and Login Route
+app.use("/api/register", require('./routes/api/register'));
+app.use("/api/login", require('./routes/api/login'));
+
 
 module.exports = app;
 
