@@ -12,6 +12,7 @@ This project is a dockerized micro-service for authentication written in Django 
 I am assuming you're in the outer **Authenticated** directory and you've enabled the virtual environment.
 1. Proceed to the Django project directory by: `cd Authenticated`
 1. Run `python manage.py migrate` to apply database changes
+1. Run `python manage.py createsuperuser` to be able to access Django admin.(This command should be run only once throughout the lifetime of this project)
 1. Run `python manage.py runserver to start the server`
 
 ## If you're resuming work on the project.
