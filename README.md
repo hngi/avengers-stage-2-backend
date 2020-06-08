@@ -8,4 +8,17 @@ This project is a dockerized micro-service for authentication written in Django 
 * Enable the virtual environment by typing `pipenv shell`.
 * Install dependencies with `pipenv sync`
 
+## To get Django part up and running if you just completed the above section
+I am assuming you're in the outer **Authenticated** directory and you've enabled the virtual environment.
+1. Proceed to the Django project directory by: `cd Authenticated`
+1. Run `python manage.py migrate` to apply database changes
+1. Run `python manage.py runserver to start the server`
+
+## If you're resuming work on the project.
+1. Ensure you're in the outer **Authenticated** directory by typing `pwd`. It should display `Authenticated, Pipfile Pipfile.lock` skip step 2. If you're seeing `Authenticated, README.md`, you're not yet there go to step 2.
+1. Enter into the directory by `cd Authenticated`
+1. Enable the virtual environment by typing `pipenv shell`.
+1. Enter into the Django project directory with `cd Authenticated`
+1. Go to step 2 of the previous heading (To get Django part up and running if you just completed the above section)
+
 #### Note: This README will be updated as often as possible to ensure we know how to set things up
