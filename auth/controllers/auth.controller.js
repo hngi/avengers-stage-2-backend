@@ -1,7 +1,14 @@
 import User from "../models/User";
 import bcrypt from "bcryptjs";
+import { validationResult } from "express-validator";
 
 export const register = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(`Error: ${errors}`);
+    return res.status(422).json({ errors: errors.array() });
+  }
+
   try {
     console.log(`Calling the auth register endpoint with ${req.body}`);
 

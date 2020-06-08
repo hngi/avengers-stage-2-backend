@@ -15,13 +15,12 @@ router.post(
   "/register",
   [
     check("email", "Please provide a valid email").isEmail(),
-    check(
-      "password",
-      "Please password must not be less than 6 characters"
-    ).isLength({
-      min: 6,
-    }),
     check("fullname", "Please enter your fullname").notEmpty(),
+    check("password")
+      .notEmpty()
+      .withMessage("Password is required")
+      .isLength({ min: 6 })
+      .withMessage("Please password should not be less than 6 characters"),
   ],
   register
 );

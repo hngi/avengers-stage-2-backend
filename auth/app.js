@@ -18,4 +18,15 @@ db.once("open", () => console.log("Connection to db established"));
 
 app.use("/api", routes);
 
+// Error handling
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.json({
+    errors: {
+      message: err.message,
+    },
+  });
+  next();
+});
+
 module.exports = app;
