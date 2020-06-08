@@ -14,6 +14,7 @@ I am assuming you're in the outer **Authenticated** directory and you've enabled
 1. Run `python manage.py migrate` to apply database changes
 1. Run `python manage.py createsuperuser` to be able to access Django admin.(This command should be run only once throughout the lifetime of this project)
 1. Run `python manage.py runserver to start the server`
+1. Visit **localhost:8000/admin** or **127.0.0.1:8000/admin** to visit the admin panel.
 
 ## If you're resuming work on the project.
 1. Ensure you're in the outer **Authenticated** directory by typing `pwd`. It should display `Authenticated, Pipfile Pipfile.lock` skip step 2. If you're seeing `Authenticated, README.md`, you're not yet there go to step 2.
