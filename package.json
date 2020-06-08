@@ -1,0 +1,40 @@
+{
+	"name": "auth-ms",
+	"version": "1.0.0",
+	"description": "A dockerized micro-service for authentication",
+	"main": "index.js",
+	"scripts": {
+		"build": "babel server --out-dir build",
+		"start": "set NODE_ENV=production && node ./build/index.js",
+		"dev-start": "set NODE_ENV=development && nodemon --exec babel-node server/index.js"
+	},
+	"keywords": [
+		"Docker",
+		"Microservice",
+		"Node",
+		"Authentication",
+		"MS"
+	],
+	"author": "team-avengers",
+	"license": "ISC",
+	"dependencies": {
+		"bcryptjs": "^2.4.3",
+		"cors": "^2.8.5",
+		"dotenv": "^8.2.0",
+		"express": "^4.17.1",
+		"mongoose": "^5.9.18",
+		"passport": "^0.4.1",
+		"passport-local": "^1.0.0"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.0.0-rc.1",
+		"@babel/core": "^7.0.0-rc.1",
+		"@babel/node": "^7.0.0-rc.1",
+		"babel-eslint": "^10.0.1",
+		"@babel/preset-env": "^7.0.0-rc.1",
+		"eslint": "^5.16.0",
+		"@babel/plugin-proposal-private-methods": "^7.6.0",
+		"@babel/plugin-syntax-dynamic-import": "^7.2.0",
+		"babel-plugin-import": "^1.13.0"
+	}
+}
