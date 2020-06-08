@@ -9,7 +9,7 @@ This project is a dockerized micro-service for authentication written in Django 
 * The **authentify** app is the app that does all the job of extending the User model. No other app is to be created. Raise an issue if you thnk otherwise
 * Whatever extension to the User model is done through a database relationship and not by OOP inheritance.
 * Ensure code works before pushing. Don't push breaking code.
-* Create branch for your own change with format: python/<your hng username>
+* Create branch for your own change with format: python/<your hng username>. Do not make pushes to the **python-branch** branch
 
 #### Note: This README will be updated as often as possible to ensure we know how to set things up
 
