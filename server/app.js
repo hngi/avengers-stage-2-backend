@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const User = require('./models/user');
 const passportConfig = require('./config/passport')(passport);
-const api = require('./routes/api');
+const api = require('./routers/api');
 
 
 
