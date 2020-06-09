@@ -6,11 +6,16 @@ const TokenUtil = require("../util/token");
 require("dotenv").config();
 
 //Load Input Validation
-const validateRegisterInput = require("../validation/register");
-const validateLoginInput = require("../validation/login");
-const validateResetInput = require("../validation/reset");
-const validateForgetInput = require("../validation/forget");
-const validateChangeInput = require("../validation/change");
+const {
+  validateRegisterInput,
+  validateLoginInput,
+  validateForgotPassword,
+  validateResetInput,
+  validateForgetInput,
+  validateChangeInput,
+} = require("../validation");
+const forgotPasswordTemplate = require("../services/templates/forgotPasswordTemplate");
+const { generateToken } = require("../services/auth");
 
 exports.registerUser = (req, res, next) => {
   const { errors, isValid } = validateRegisterInput(req.body);
@@ -78,8 +83,7 @@ exports.loginUser = (req, res, next) => {
             .send({ response: "Incorrect username or password" });
         }
 
-        const token = TokenUtil.signedJWT(email);
-
+        const token = generateToken({ email }, "4800s");
         return res.status(200).send({
           success: true,
           token,
@@ -249,36 +253,41 @@ exports.changePassword = function(req, res) {
   );
 };
 
-exports.forgotPassword = (req, res, next) => {
-  const { errors, isValid } = validateLoginInput(req.body);
+exports.forgotPassword = async (req, res) => {
+  const { errors, isValid } = validateForgotPassword(req.body);
 
-  //Check if the login is valid
+  // validate user's payload
   if (!isValid) {
     return res.status(400).json(errors);
   }
-  const { email, password } = req.body;
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
 
-  User.findOne({ email })
-    .then((user) => {
-      if (!user) {
-        return res.status(423).send("User does not exist, kindly register!!");
-      }
-      const token = jwt.sign(
-        {
-          email,
-        },
-        "secrettoken",
-        {
-          expiresIn: "1hr",
-        }
-      );
-      // send email to the user with the token embed in it
-      // const hrefLink = `/reset-password/${token}`;
-      // sendMail(hrefLink);
+    // Check if the email exist
+    if (!user) {
+      return res.status(404).send("Email not found");
+    }
 
-      return res.status(200).send({
-        message: "kindly check your email for a password reset link",
-      });
-    })
-    .catch((err) => console.log(err));
+    const token = generateToken({ email }, "1h");
+
+    /* send email to the user with the token embed in it
+     * using the implemented email utility let say *sendMail*
+     * below is an example
+     * const emailBody = forgotPasswordTemplate(token, user.name, domain);
+     * only the token parameter is required others are optional
+     * sendMail(email, emailBody); */
+
+    const subject = "Password reset";
+    const msg = forgotPasswordTemplate(token, user.name, req.headers.host);
+    const e = await MailerUtil.sendMail(user.email, subject, msg);
+    console.log("sengrid succeful", e);
+
+    return res.status(200).send({
+      message: "kindly check your email for a password reset link",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: err.message });
+  }
 };
