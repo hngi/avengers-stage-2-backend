@@ -275,13 +275,6 @@ exports.forgotPassword = async (req, res) => {
 
     const token = generateToken({ email }, "1h");
 
-    /* send email to the user with the token embed in it
-     * using the implemented email utility let say *sendMail*
-     * below is an example
-     * const emailBody = forgotPasswordTemplate(token, user.name, domain);
-     * only the token parameter is required others are optional
-     * sendMail(email, emailBody); */
-
     const subject = "Password reset";
     const msg = forgotPasswordTemplate(token, user.name, req.headers.host);
     const e = await MailerUtil.sendMail(user.email, subject, msg);
