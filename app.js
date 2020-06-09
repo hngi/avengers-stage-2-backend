@@ -7,30 +7,30 @@ const swaggerDocument = require('./docs/swagger.json');
 require('dotenv').config()
 
 //Call in the routes
-const users = require('./routers/users')
-const PORT = 3000
+const users = require('./routers/users.route')
 
 //DB Config
-const db = process.env.MONGODB_URI
+let db = process.env.MONGODB_URI
 
-//Mongoose Connect
+//switch between docker image and atlas
+if (process.env.DOCKER_DB) {
+  db = process.env.DOCKER_DB;
+}
+
+//db connection
 mongoose
-  .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Database Connected'))
-  .catch(err => console.log(err))
+  .connect(db, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => { console.log('connected')})
+  .catch(error => {
+    console.log(error);
+  });
 
 // Initializing express json Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-let options = {
-  //specify options
-  host: `localhost:${PORT}`
-}
-
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use('/api/v1', users);
 
-app.listen(PORT, () => {
-  console.log('Server Running!!!!')
-})
+//open the port
+app.listen(process.env.PORT)
