@@ -1,17 +1,36 @@
-var express = require('express');
-var app = express();
-var mongoose = require('mongoose');
-var bodyParser = require('body-parser');
-const indexRoute = require('./routers/index')(app);
-var PORT = 3000;
+const express = require('express')
+const app = express()
+const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
+const swaggerUI = require('swagger-ui-express');
+const swaggerDocument = require('./docs/swagger.json');
+require('dotenv').config()
 
-var options = { //specify options
-    host: `localhost:${PORT}`
+//Call in the routes
+const users = require('./routers/users.route')
+
+//DB Config
+let db = process.env.MONGODB_URI
+
+//switch between docker image and atlas
+if (process.env.DOCKER_DB) {
+  db = process.env.DOCKER_DB;
 }
 
-//USE AS MIDDLEWARE
-app.use(bodyParser.json()); // add body parser
+//db connection
+mongoose
+  .connect(db, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => { console.log('connected')})
+  .catch(error => {
+    console.log(error);
+  });
 
-app.listen(PORT, ()=> {
-    console.log('started');
-});
+// Initializing express json Middleware
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+app.use('/api/v1', users);
+
+//open the port
+app.listen(process.env.PORT)
