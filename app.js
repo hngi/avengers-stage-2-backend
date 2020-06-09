@@ -6,7 +6,6 @@ require('dotenv').config()
 
 //Call in the routes
 const users = require('./routers/users')
-const google = require('./routers/google')
 const PORT = 3000
 
 //DB Config
@@ -28,7 +27,6 @@ let options = {
 }
 
 app.use('/api/v1', users)
-app.use('/api/v1', google)
 
 app.listen(PORT, () => {
   console.log('Server Running!!!!')
