@@ -3,6 +3,24 @@ This project is a dockerized micro-service for authentication written in Django 
 
 ## Update: Pull requests will be accepted now.
 
+## Not familiar git? Do this
+
+1. Fork the repo by clicking on the **Fork** button at the top right corner
+1. Go to your Terminal(Linux and Mac users), Git Bash(Windows), Termux(Android) and `cd` to the directory you'd like to work from. If you're using Termux, do `termux-setup-storage` and then `cd storage/downloads` and work from there.
+1. Run `git clone git@github.com:Lord-sarcastic/avengers-stage-2-backend.git` to clone the repo on your machine.
+1. Run `cd avengers-stage-2-backend` to enter into the cloned repo.
+1. Run `git remote add upstream git@github.com:Lord-sarcastic/avengers-stage-2-backend.git` to create an alias for the repository
+1. Go to your forked repository, there is a **clone or download** button, click on it and copy the url displayed.
+1. Go back to your terminal and add an alias for your repo by running `git remote add task3 <paste the url here>`, without the angled brackets. You can replace **task3** with an alias of your choice, just make sure you remember it.
+1. Run `git checkout python-branch` to ensure you're in the correct branch.
+1. Make your changes to the file, make your contributions and smile a lot while doing that. We don't want angry code in the repo.
+1. Run `git add .` to stage all your changes to be committed. Do not spill anything on your PC at this point.
+1. Run `git commit -m "<your hng username>:<Bug||Chore||Feature>: <Your commit message>"`
+1. Run `git pull --rebase upstream python-branch` to apply possible changes that might have happened on the online repo while you were making your own changes.
+1. Run `git push task3 python-branch`. Remember to replace the alias if you changed it.
+1. Visit the URL of your forked repo. You'll see a button **Compare and pull request**. Click on it, type the appropriate messages and then make the pull request.
+1. Take a nap, you earned it no matter how little your change.
+
 ## To contribute:
 
 * Ensure you do not edit the .gitignore file for any reason. 
