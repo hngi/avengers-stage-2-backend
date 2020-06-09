@@ -84,3 +84,41 @@ exports.loginUser = (req, res, next) => {
       .catch(err => console.log(err))
   })
 }
+
+exports.checkToken = (req, res, next) => {
+  const header = req.headers['authorization'];
+
+  if(typeof header !== 'undefined') {
+    const token = header.split(' ')[1];
+
+    req.token = token;
+    next();
+  } else {
+    res.sendStatus(403);
+  }
+}
+
+exports.resetPassword = (req, res) => {
+  const {old_password, new_password, confirm_password} = req.body;
+  jwt.verify(req.token, 'secrettoken', (err, userData) => {
+    if(err) {
+      res.status(403).json({error: 'Unable to reset password'});
+    } else {
+      const {email} = userData;
+      User.findOne({email}, (err, user) => {
+        bcrypt.compare(req.body.old_password, user.password, function(err, result) {
+          
+          if(!result) return res.status(403).send('Incorrect password');
+          if(new_password !== confirm_password) return res.status(403).send('Passwords do not match.')
+          bcrypt.hash(new_password, 10, (err, pwHash) => {
+            if(err) throw err;
+            user.password = pwHash;
+            user.save((err, data) => {
+              return res.status(200).send('Password successfully reset')
+            })
+          })
+        })
+      })
+    }
+  })
+}
