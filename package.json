@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app.js",
+    "start-dev": "nodemon --exec babel-node app.js"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +19,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.18",
     "nodemon": "^2.0.4",
+    "swagger-ui-express": "^4.1.4",
     "validator": "^13.0.0"
   }
 }
