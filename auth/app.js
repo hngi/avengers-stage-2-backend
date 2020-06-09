@@ -32,9 +32,15 @@ var sess = {
     resave: false,
     saveUninitialized: true,
     cookie: {
-
+        path: '/api',
+        maxAge: 1000 * 60 * 60 * 24 * 15
     },
 }
+
+// if(app.get('env') === 'production') {
+//     app.set('trust proxy', 1)
+//     sess.cookie.secure = true
+// }
 
 app.use(session(sess));
 app.use(cors());

@@ -31,6 +31,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
     //find user using id from session store
+    console.log('inside ds cb')
     User.findById(id, (err, user) => {
         if(err) return done(err);
         done(null, user);
