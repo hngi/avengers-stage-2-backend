@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'dj_rest_auth.registration',
     'allauth.socialaccount',
+    'rest_auth',
 ]
 
 MIDDLEWARE = [
