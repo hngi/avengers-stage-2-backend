@@ -5,7 +5,7 @@ This project is a dockerized micro-service for authentication written in Django 
 
 ## Not familiar git? Do this
 
-1. Fork the repo by clicking on the **Fork** button at the top right corner
+1. Fork the repo by visiting this [link](https://github.com/Lord-sarcastic/avengers-stage-2-backend/fork) or clicking on the **Fork** button at the top right corner
 1. Go to your Terminal(Linux and Mac users), Git Bash(Windows), Termux(Android) and `cd` to the directory you'd like to work from. If you're using Termux, do `termux-setup-storage` and then `cd storage/downloads` and work from there.
 1. Run `git clone git@github.com:Lord-sarcastic/avengers-stage-2-backend.git` to clone the repo on your machine.
 1. Run `cd avengers-stage-2-backend` to enter into the cloned repo.
