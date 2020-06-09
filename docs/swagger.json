@@ -1,0 +1,154 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "description": "Swagger API for Authentication - HNGi7",
+      "version": "1.0.0",
+      "title": "Auth"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000/api/v1"
+      }
+    ],
+    "tags": [
+      {
+        "name": "User",
+        "description": "All actions by User"
+      }
+    ],
+    "paths": {
+      "/register": {
+        "post": {
+          "tags": [
+            "User"
+          ],
+          "summary": "Register a new user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "email",
+                    "password",
+                    "confirmPassword"
+                  ],
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "minLength": 4,
+                      "pattern": "/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/"
+                    },
+                    "password": {
+                      "type": "string",
+                      "minLength": 4
+                    },
+                    "confirmPassword": {
+                      "type": "string",
+                      "minLength": 4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Successfully created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Missing required parameter"
+            }
+          }
+        }
+      },
+      "/login": {
+        "post": {
+          "tags": [
+            "User"
+          ],
+          "summary": "Logs in a registered user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "email",
+                    "password"
+                  ],
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "minLength": 4,
+                      "pattern": "/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/"
+                    },
+                    "password": {
+                      "type": "string",
+                      "minLength": 4
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful operation",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Missing required parameter"
+            },
+            "500": {
+              "description": "Server Error"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "authorization"
+        }
+      },
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "token": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+  

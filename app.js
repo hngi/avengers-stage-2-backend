@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
+const swaggerUI = require('swagger-ui-express');
+const swaggerDocument = require('./docs/swagger.json');
 require('dotenv').config()
 
 //Call in the routes
@@ -26,7 +28,8 @@ let options = {
   host: `localhost:${PORT}`
 }
 
-app.use('/api/v1', users)
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+app.use('/api/v1', users);
 
 app.listen(PORT, () => {
   console.log('Server Running!!!!')
