@@ -152,11 +152,11 @@ ACCOUNT_USERNAME_REQUIRED = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        #'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-        'dj_rest_auth.utils.JWTCookieAuthentication',
+        # 'dj_rest_auth.utils.JWTCookieAuthentication',
     )
 }
-REST_USE_JWT = True
-JWT_AUTH_COOKIE = 'authenticated'
+# REST_USE_JWT = True
+# JWT_AUTH_COOKIE = 'authenticated'
 ACCOUNT_LOGOUT_ON_GET = True
