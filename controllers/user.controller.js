@@ -6,6 +6,7 @@ require('dotenv').config()
 //Load Input Validation
 const validateRegisterInput = require('../validation/register')
 const validateLoginInput = require('../validation/login')
+const validateResetInput = require('../validation/reset')
 
 exports.registerUser = (req, res, next) => {
   const { errors, isValid } = validateRegisterInput(req.body)
@@ -100,8 +101,15 @@ exports.checkToken = (req, res, next) => {
 }
 
 exports.resetPassword = (req, res) => {
+  const { errors, isValid } = validateRegisterInput(req.body)
+
+  //Check Validation
+  if (!isValid) {
+    return res.status(400).send({ response: errors })
+  }
+  
   const {old_password, new_password, confirm_password} = req.body;
-  jwt.verify(req.token, 'secrettoken', (err, userData) => {
+  jwt.verify(req.token, process.env.SECRET_TOKEN, (err, userData) => {
     if(err) {
       res.status(403).json({response: 'Unable to reset password'});
     } else {
