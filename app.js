@@ -9,8 +9,7 @@ const users = require('./routers/users')
 const PORT = 3000
 
 //DB Config
-// const db = process.env.MONGODB_URI
-const db = 'mongodb://localhost:27017/avengers'
+const db = process.env.MONGODB_URI
 
 //Mongoose Connect
 mongoose
