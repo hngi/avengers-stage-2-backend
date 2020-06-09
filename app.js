@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
+const swaggerUI = require('swagger-ui-express');
+const swaggerDocument = require('./docs/swagger.json');
 require('dotenv').config()
 
 //Call in the routes
@@ -27,8 +29,8 @@ mongoose
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-//set base route for the service
-app.use('/api/v1', users)
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+app.use('/api/v1', users);
 
 //open the port
 app.listen(process.env.PORT)
