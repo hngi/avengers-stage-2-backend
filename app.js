@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 8000;
+const port = process.env.port || 8000;
 
 const morgan = require('morgan');
 var cors = require('cors')
@@ -42,7 +42,7 @@ mongoose.connect(config.DB, {
 
 // Homepage
 app.get('/', (req, res) => {
-    res.send("Relax");
+    res.send("HNG Team-Avengers Task");
 });
 
 
