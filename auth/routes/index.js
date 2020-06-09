@@ -71,17 +71,4 @@ router.route('/reset-password')
   })
 
 
-
-  router.get('/rem', (req, res) => {
-    User.remove({}, (err, data) => {
-      res.send(data)
-    })
-  })
-
-  router.get('/all', (req, res) => {
-    User.find({}, (err, data) => {
-      res.send(data)
-    })
-  })
-
 export default router;
