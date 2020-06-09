@@ -5,6 +5,7 @@ module.exports = function validateLoginInput (data) {
   let errors = {}
 
   data.email = !isEmpty(data.email) ? data.email : ''
+  data.username = !isEmpty(data.username) ? data.username : ''
   data.password = !isEmpty(data.password) ? data.password : ''
 
   if (!Validator.isEmail(data.email)) {
@@ -21,6 +22,10 @@ module.exports = function validateLoginInput (data) {
 
   if (Validator.isEmpty(data.email)) {
     errors.email = 'Email field is required'
+  }
+
+  if (Validator.isEmpty(data.username)) {
+    errors.username = 'Username is required'
   }
 
   return {

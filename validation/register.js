@@ -5,6 +5,7 @@ module.exports = function validateRegisterInput (data) {
   let errors = {}
 
   data.email = !isEmpty(data.email) ? data.email : ''
+  data.username = !isEmpty(data.username) ? data.username : ''
   data.password = !isEmpty(data.password) ? data.password : ''
   data.confirmPassword = !isEmpty(data.confirmPassword)
     ? data.confirmPassword
@@ -26,6 +27,10 @@ module.exports = function validateRegisterInput (data) {
     errors.password = 'Password must be more than 5 characters'
   }
 
+  if (Validator.isEmpty(data.username)) {
+    errors.username = 'Username is required'
+  }
+  
   if (Validator.isEmpty(data.confirmPassword)) {
     errors.confirmPassword = 'Please confirm password'
   }

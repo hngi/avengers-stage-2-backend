@@ -14,7 +14,7 @@ exports.registerUser = (req, res, next) => {
     return res.status(400).json(errors)
   }
 
-  const { email, password } = req.body
+  const { username, email, password } = req.body
 
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
@@ -22,6 +22,7 @@ exports.registerUser = (req, res, next) => {
       return res.status(400).json({ errors })
     } else {
       const newUser = new User({
+        username,
         email,
         password
       })
@@ -50,7 +51,7 @@ exports.loginUser = (req, res, next) => {
   if (!isValid) {
     return res.status(400).json(errors)
   }
-  const { email, password } = req.body
+  const { username, email, password } = req.body
 
   User.findOne({ email }).then(user => {
     if (!user) {
@@ -66,10 +67,11 @@ exports.loginUser = (req, res, next) => {
 
         const token = jwt.sign(
           {
+            username,
             email,
             password
           },
-          'secrettoken',
+          process.env.JWT_SECRET,
           {
             expiresIn: '4800s'
           }
