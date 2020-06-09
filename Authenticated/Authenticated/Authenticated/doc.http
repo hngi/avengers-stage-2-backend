@@ -1,0 +1,21 @@
+### Registration
+## For registration
+POST http://127.0.0.1:8000/auth/registration/ HTTP/1.1 
+content-type: application/json
+
+{
+    "username":"abc12",
+    "password1":"test1.111",
+    "password2":"test1.111",
+    "email":"hello1@gmail.com"
+}
+
+###LOGIN
+POST http://127.0.0.1:8000/auth/login/ HTTP/1.1 
+content-type: application/json
+
+{
+    "username":"abc12",
+    "password":"test1.111",
+    "email":"hello1@gmail.com"
+}
