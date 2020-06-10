@@ -210,7 +210,6 @@ exports.changePassword = function(req, res) {
           }).catch(() => {
             res.status(200).send({ success: true, response: 'Password changed' })
           })
-          res.status(200).send('changed');
         })
       })
     })

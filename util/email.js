@@ -1,21 +1,15 @@
-// const sgMail = require('@sendgrid/mail');
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const nodemailer = require('nodemailer')
+require('dotenv').config()
 
 exports.sendMail = (to, subject, msg) => {
     return new Promise((resolve, reject) => {
         const smtpTransport = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
+            host: process.env.MAIL_HOST,
+            port: process.env.MAIL_PORT,
+            secure: false,
             auth: {
-                type: 'OAuth2',
-                user: 'mamudseun@gmail.com',
-                clientId: '115118855190-nf6g5enqktl3uhqb1883tlr02m6f69pr.apps.googleusercontent.com',
-                clientSecret: 'e1e6Ul-7s-RAm20uVKT0W_An',
-                refreshToken: '1//04RP77MTu11fcCgYIARAAGAQSNwF-L9IrMYYXlpXARG-vKe_HkqGyfLuaMD9WdJZsQJ0sP2Hyd_RrF9NIx9FIlviAmxUfvpiPyx4',
-                accessToken: 'ya29.a0AfH6SMC1wtax57Kq3tRYHp0D25rhuczTFVUaAEjsP_PV4qMRSZzYU2qoYQ07ItIuAT-hvSRJaPEHQvZrgFfEslSaVtze8cl5l5yechPXxp917uAYMsjnc2zAykbYq0ANVcs4GonCl_C6P_O3tcLRmkgz9bMwsGGF5gE',
-                expires: 1484314697598
+                user: process.env.MAIL_USERNAME, // generated ethereal user
+                pass: process.env.MAIL_PASSWORD, // generated ethereal password
             }
         });
   
@@ -29,13 +23,17 @@ exports.sendMail = (to, subject, msg) => {
         });
   
         const mailOptions = {
-            from: 'mamudseun@gmail.com',
+            from: '"Team Avengers 👻" <dasther@outlook.com>',
             to: to,
             subject: subject,
-            text: msg
+            text: msg,
+            html: msg
         };
   
-        smtpTransport.sendMail(mailOptions, function(err) {
+        smtpTransport.sendMail(mailOptions, (err) => {
+            if(err){
+                reject(err);
+            }
             resolve(true);
         });
     })
