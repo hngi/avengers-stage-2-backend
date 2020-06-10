@@ -13,12 +13,11 @@ module.exports = {
   /* code for Sign Up mail here */
   sendSignupMail : (emailAddr) => {
 
-    // TODO: kindly finish up the code
     const mailData = {
       to: emailAddr,
-      cc: '', // optional
-      subject: '',
-      html: ``
+      from: process.env.SENDER_EMAIL, // optional
+      subject: 'SIGN UP COMPLETED',
+      text: "Welcome to Avengers App\n\nWe are glad to have you on board.\nDo well to explore all our services.\n\nBest Regards."
 
     }
 
@@ -35,7 +34,7 @@ module.exports = {
     const msg = {
       to: emailAddr,
       from: process.env.SENDER_EMAIL,
-      subject: 'Avengers APP',
+      subject: 'USER SIGNED IN TO AVENGERS APP',
       text: 'Hello, \nYou just signed into your account at ' + time + '\n Best Regards! ',
      
     };
@@ -49,7 +48,17 @@ module.exports = {
 
   /* code for Forgot Password mail here */
   sendForgotpasswordMail : (emailAddr) => {
+    const mailData = {
+      to: emailAddr,
+      cc: '', // optional
+      subject: 'Successful Signup to Avengers App',
+      html: ``
 
+    }
+
+    return new Promise((resolve, reject) => {
+      sendGrid.send(mailData).then(resolve).catch(reject);
+    })
   }
 
 } //end module
