@@ -389,6 +389,32 @@
         "in": "header",
         "name": "authorization"
       }
+    },
+  "schemas": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "old_password": {
+          "type": "string"
+        },
+        "new_password": {
+          "type": "string"
+        },
+        "confirm_password": {
+          "type": "string"
+        }
+      }
     }
   }
 }
+}
+
