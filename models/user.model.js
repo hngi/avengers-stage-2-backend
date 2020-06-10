@@ -9,7 +9,9 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date
 })
 
 module.exports = User = mongoose.model('users', userSchema)
