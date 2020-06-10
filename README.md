@@ -4,7 +4,7 @@ This project is a dockerized micro-service for authentication written in NodeJS 
 
 ## Project Setup
 
-Run `npm install` at the root of the project to To install necessary dependencies
+Run `npm install` at the root of the project to install necessary dependencies
 
 To run the code, the Docker daemon and the docker-compose tool must be running on localhost.
 
