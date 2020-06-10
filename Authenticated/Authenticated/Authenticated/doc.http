@@ -1,6 +1,6 @@
 ### Registration
 ## For registration
-POST http://127.0.0.1:8000/auth/registration/ HTTP/1.1 
+POST http://127.0.0.1:8000/api/v1/auth/register/ HTTP/1.1 
 content-type: application/json
 
 {
@@ -11,7 +11,7 @@ content-type: application/json
 }
 
 ###LOGIN
-POST http://127.0.0.1:8000/auth/login/ HTTP/1.1 
+POST http://127.0.0.1:8000/api/v1/auth/login/ HTTP/1.1 
 content-type: application/json
 
 {
