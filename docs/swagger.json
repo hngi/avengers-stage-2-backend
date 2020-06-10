@@ -22,7 +22,7 @@
         "tags": [
           "User"
         ],
-        "summary": "",
+        "summary": "Registers a new user",
         "requestBody": {
           "required": true,
           "content": {
@@ -31,7 +31,8 @@
                 "type": "object",
                 "required": [
                   "email",
-                  "password"
+                  "password",
+                  "confirm_password"
                 ],
                 "properties": {
                   "email": {
@@ -40,6 +41,10 @@
                     "pattern": "/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/"
                   },
                   "password": {
+                    "type": "string",
+                    "minLength": 4
+                  },
+                  "confirm_password": {
                     "type": "string",
                     "minLength": 4
                   }
@@ -54,13 +59,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/Register"
                 }
               }
             }
           },
           "400": {
-            "description": "Email already exists"
+            "description": "If email already exists, fields are not supplied, password is less than 5 characters, password does not equals confirm password"
           },
           "500": {
             "description": "Server Error"
@@ -76,7 +81,7 @@
         "tags": [
           "User"
         ],
-        "summary": "",
+        "summary": "Logins a registered user",
         "requestBody": {
           "required": true,
           "content": {
@@ -108,19 +113,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/Login"
                 }
               }
             }
           },
           "400": {
-            "description": "Missing required parameter"
+            "description": "If required parameters are missing"
           },
           "423": {
-            "description": "User does not exist, kindly register!"
+            "description": "If user does not exist"
           },
           "403": {
-            "description": "Incorrect username or password"
+            "description": "If username or password is incorrect"
           },
           "500": {
             "description": "Server Error"
@@ -136,7 +141,7 @@
         "tags": [
           "User"
         ],
-        "summary": "",
+        "summary": "Resets password",
         "security": [
           {
             "ApiKeyAuth": []
@@ -173,20 +178,13 @@
         },
         "responses": {
           "200": {
-            "description": "Password reset successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
+            "description": "If password resets successful"
           },
           "400": {
-            "description": "Missing required parameter"
+            "description": "If required parameters are missing"
           },
           "403": {
-            "description": "Incorrect password"
+            "description": "If unable to rest password, password incorrect or password do not match"
           },
           "500": {
             "description": "Server Error"
@@ -203,7 +201,7 @@
       "tags": [
         "User"
       ],
-      "summary": "",
+      "summary": "Sends reset link to mail if user forgets password",
       "requestBody": {
         "required": true,
         "content": {
@@ -226,17 +224,10 @@
       },
       "responses": {
         "200": {
-          "description": "Successful operation",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          }
+          "description": "If reset link is successfully sent"
         },
         "400": {
-          "description": "Missing required parameter"
+          "description": "If there are missing required parameter or the email address does not exist"
         },
         "500": {
           "description": "Server Error"
@@ -251,7 +242,7 @@
       "tags": [
         "User"
       ],
-      "summary": "",
+      "summary": "Changes user password",
       "security": [
         {
           "ApiKeyAuth": []
@@ -288,17 +279,10 @@
       },
       "responses": {
         "200": {
-          "description": "Successful operation",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          }
+          "description": "If password change is successful"
         },
         "400": {
-          "description": "Missing required parameter"
+          "description": "If password reset token is invalid or has expired or there is an error changing passwor"
         },
         "500": {
           "description": "Server Error"
@@ -314,20 +298,10 @@
       "tags": [
         "User"
       ],
-      "summary": "",
+      "summary": "signs in with google account",
       "responses": {
-        "200": {
-          "description": "Successful operation",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          }
-        },
-        "404": {
-          "description": "An error has occured"
+        "201": {
+          "description": "If operation is successful"
         },
         "500": {
           "description": "Server Error"
@@ -361,17 +335,10 @@
       ],
       "responses": {
         "200": {
-          "description": "Successful operation",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          }
+          "description": "If operation is successful"
         },
-        "404": {
-          "description": "An error has occured"
+        "400": {
+          "description": "If there is an error in signing a user in"
         },
         "500": {
           "description": "Server Error"
@@ -391,6 +358,34 @@
       }
     },
   "schemas": {
+    "Register": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "_id": { 
+          "type": "string"
+        },
+        "email": { 
+          "type": "string"
+        },
+        "password": { 
+          "type": "string"
+        }
+      }
+    },
+    "Login": {
+      "type":"object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "token": { 
+          "type": "string"
+        }
+      }
+    },
     "User": {
       "type": "object",
       "properties": {

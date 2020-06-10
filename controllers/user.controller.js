@@ -177,7 +177,7 @@ exports.changePassword = function(req, res) {
 
   //Check Validation
   if (!isValid) {
-    return res.status(403).send({ response: errors })
+    return res.status(400).send({ response: errors })
   }
 
   const {password} = req.body;
