@@ -22,7 +22,7 @@
         "tags": [
           "User"
         ],
-        "summary": "Register a new user",
+        "summary": "",
         "requestBody": {
           "required": true,
           "content": {
@@ -31,8 +31,7 @@
                 "type": "object",
                 "required": [
                   "email",
-                  "password",
-                  "confirmPassword"
+                  "password"
                 ],
                 "properties": {
                   "email": {
@@ -41,10 +40,6 @@
                     "pattern": "/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/"
                   },
                   "password": {
-                    "type": "string",
-                    "minLength": 4
-                  },
-                  "confirmPassword": {
                     "type": "string",
                     "minLength": 4
                   }
@@ -65,17 +60,23 @@
             }
           },
           "400": {
-            "description": "Missing required parameter"
+            "description": "Email already exists"
+          },
+          "500": {
+            "description": "Server Error"
           }
         }
       }
     },
+
+
+
     "/login": {
       "post": {
         "tags": [
           "User"
         ],
-        "summary": "Logs in a registered user",
+        "summary": "",
         "requestBody": {
           "required": true,
           "content": {
@@ -103,7 +104,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "Login succesful!",
             "content": {
               "application/json": {
                 "schema": {
@@ -115,18 +116,27 @@
           "400": {
             "description": "Missing required parameter"
           },
+          "423": {
+            "description": "User does not exist, kindly register!"
+          },
+          "403": {
+            "description": "Incorrect username or password"
+          },
           "500": {
             "description": "Server Error"
           }
         }
       }
     },
+
+
+
     "/reset-password": {
       "post": {
         "tags": [
           "User"
         ],
-        "summary": "Reset a registered user password",
+        "summary": "",
         "security": [
           {
             "ApiKeyAuth": []
@@ -163,7 +173,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "Password reset successful",
             "content": {
               "application/json": {
                 "schema": {
@@ -175,44 +185,209 @@
           "400": {
             "description": "Missing required parameter"
           },
+          "403": {
+            "description": "Incorrect password"
+          },
           "500": {
             "description": "Server Error"
           }
         }
       }
+   },
+
+
+
+
+  "/forget-password": {
+    "post": {
+      "tags": [
+        "User"
+      ],
+      "summary": "",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "minLength": 4,
+                  "pattern": "/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successful operation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Missing required parameter"
+        },
+        "500": {
+          "description": "Server Error"
+        }
+      }
     }
   },
+
+
+  "/change-password/{token}": {
+    "post": {
+      "tags": [
+        "User"
+      ],
+      "summary": "",
+      "security": [
+        {
+          "ApiKeyAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "token",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "type": "string",
+                  "minLength": 4
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Successful operation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Missing required parameter"
+        },
+        "500": {
+          "description": "Server Error"
+        }
+      }
+    }
+  },  
+
+
+
+  "/google-signin": {
+    "get": {
+      "tags": [
+        "User"
+      ],
+      "summary": "",
+      "responses": {
+        "200": {
+          "description": "Successful operation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "An error has occured"
+        },
+        "500": {
+          "description": "Server Error"
+        }
+      }
+    }
+  },
+
+
+
+  "/google/callback/{code}": {
+    "post": {
+      "tags": [
+        "User"
+      ],
+      "summary": "",
+      "security": [
+        {
+          "ApiKeyAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "code",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful operation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "An error has occured"
+        },
+        "500": {
+          "description": "Server Error"
+        }
+      }
+    }
+  }
+
+
+},
   "components": {
     "securitySchemes": {
       "ApiKeyAuth": {
         "type": "apiKey",
         "in": "header",
         "name": "authorization"
-      }
-    },
-    "schemas": {
-      "User": {
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "old_password": {
-            "type": "string"
-          },
-          "new_password": {
-            "type": "string"
-          },
-          "confirm_password": {
-            "type": "string"
-          }
-        }
       }
     }
   }
