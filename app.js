@@ -1,11 +1,10 @@
-const express = require('express')
-const app = express()
-const mongoose = require('mongoose')
-const bodyParser = require('body-parser')
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const swaggerUI = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
 require('dotenv').config()
-
+const app = express()
 //Call in the routes
 const users = require('./routers/users.route')
 
@@ -34,3 +33,4 @@ app.use('/api/v1', users);
 
 //open the port
 app.listen(process.env.PORT)
+console.log('App listening on Port:' + process.env.PORT);
