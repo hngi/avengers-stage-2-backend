@@ -7,8 +7,8 @@ const OAuth2Client =google.auth.OAuth2
 
 //Config google api
 const googleConfig = {
-    clientId: process.env.GOOGLE_CLIENT_ID, 
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    clientId: process.env.GSOOGLE_CLIENT_ID, 
+    clientSecret: process.env.GSOOGLE_CLIENT_SECRET,
     redirect: process.env.GOOGLE_REDIRECT_URL,
 };
 
