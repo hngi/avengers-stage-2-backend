@@ -134,6 +134,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+LOGIN_REDIRECT_URL = '/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -160,3 +161,4 @@ REST_FRAMEWORK = {
 # REST_USE_JWT = True
 # JWT_AUTH_COOKIE = 'authenticated'
 ACCOUNT_LOGOUT_ON_GET = True
+

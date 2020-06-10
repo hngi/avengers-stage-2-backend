@@ -18,6 +18,6 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('dj_rest_auth.urls')),
-    path('auth/registration', include('dj_rest_auth.registration.urls'))
+    path('', include('authentify.urls')),
+    path('accounts/', include('django.contrib.auth.urls')), #this allows tghe user login using django built in function
 ]
