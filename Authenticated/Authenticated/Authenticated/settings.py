@@ -41,14 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
+    'dj_rest_auth.registration',
     'dj_rest_auth',
-    'django.contrib.sites',
     'allauth',
     'allauth.account',
-    'dj_rest_auth.registration',
-    'allauth.socialaccount',
 ]
 
 MIDDLEWARE = [
@@ -142,22 +141,13 @@ STATIC_ROOT = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-REST_SESSION_LOGIN = True
+LOGIN_REDIRECT_URL = "/"
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+REST_SESSION_LOGIN = True
 SITE_ID = 1
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
-ACCOUNT_USERNAME_REQUIRED = True
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-        #'rest_framework.permissions.IsAuthenticated',
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-    )
-}
+#ACCOUNT_AUTHENTICATION_METHOD = 'email'
+#ACCOUNT_EMAIL_VERIFICATION = 'optional'
+#ACCOUNT_USERNAME_REQUIRED = True
 # REST_USE_JWT = True
-# JWT_AUTH_COOKIE = 'authenticated'
-ACCOUNT_LOGOUT_ON_GET = True
+LOGOUT_ON_PASSWORD_CHANGE = True
