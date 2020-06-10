@@ -33,7 +33,7 @@ app.use(passport.initialize());
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use('/api/v1', users);
-app.use('/',authRoute)
+app.use('/api/v1',authRoute)
 
 //open the port
 app.listen(process.env.PORT)
