@@ -1,10 +1,10 @@
 const Validator = require('validator')
 const isEmpty = require('./isEmpty')
 
-module.exports = function validateRegisterInput (data) {
+module.exports = function validateResetInput (data) {
   let errors = {}
 
-    data.old_password = !isEmpty(data.old_password) ? data.data.old_password : ''
+    data.old_password = !isEmpty(data.old_password) ? data.old_password : ''
     data.new_password = !isEmpty(data.new_password) ? data.new_password : ''
     data.confirm_password = !isEmpty(data.confirm_password) ? data.confirm_password: ''
 

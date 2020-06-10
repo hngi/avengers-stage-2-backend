@@ -1,7 +1,6 @@
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
-const bodyParser = require('body-parser')
 const swaggerUI = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
 require('dotenv').config()
@@ -13,9 +12,9 @@ const users = require('./routers/users.route')
 let db = process.env.MONGODB_URI
 
 //switch between docker image and atlas
-if (process.env.DOCKER_DB) {
-  db = process.env.DOCKER_DB;
-}
+ if (process.env.DOCKER_DB) {
+   db = process.env.DOCKER_DB;
+ }
 
 //db connection
 mongoose
