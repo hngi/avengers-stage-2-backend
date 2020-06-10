@@ -24,9 +24,9 @@ passport.serializeUser(function(user, done) {
     //passReqToCallback   : true,
     userProfileURL:'https://www.googleapis.com/oauth2/v3/userinfo'
   },
-  function(accessToken, refreshToken, profile, done) {
-    //console.log(profile)
-    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+  function(accessToken, refreshToken, profile,done) {
+    console.log(profile.emails[0].value)
+    User.findOrCreate({ googleId: profile.id,email:profile.emails[0].value }, function (err, user) {
      // console.log('user')
       return done(err, user);
     });

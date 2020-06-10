@@ -11,7 +11,7 @@ const users = require('./routers/users.route')
 const authRoute = require('./routers/auth')
 
 //DB Config
-//let db = process.env.MONGODB_URI
+let db = process.env.MONGODB_URI
 
 //switch between docker image and atlas
  if (process.env.DOCKER_DB) {
