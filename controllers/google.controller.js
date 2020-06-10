@@ -62,7 +62,7 @@ exports.getGoogleAccountFromCode = async (req, res) => {
         if(res){
             return res.status(200).send({
                 success: true,
-                token: TokenUtil.signedToken(userGoogleEmail)
+                token: TokenUtil.signedJWT(userGoogleEmail)
             })
         }else{
             const newUser = new User({
@@ -75,7 +75,7 @@ exports.getGoogleAccountFromCode = async (req, res) => {
                     if (err) throw err
                     newUser.password = hash
                     newUser.save().then(user => {
-                        res.status(200).send({ success: true, token: TokenUtil.signedToken(userGoogleEmail)}) 
+                        res.status(200).send({ success: true, token: TokenUtil.signedJWT(userGoogleEmail)}) 
                     }).catch(err => console.log(err))
                 })
             })
