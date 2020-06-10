@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const User = require('../models/user.model')
+const Mailer = require('../mail/index')
+
 require('dotenv').config()
 
 //Load Input Validation
@@ -78,6 +80,8 @@ exports.loginUser = (req, res, next) => {
           }
         )
 
+        Mailer.sendSigninMail(email)
+        console.log('Mail sent to ' + email)
         return res.status(200).send({
           success: true,
           token
