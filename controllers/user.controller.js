@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const User = require('../models/user.model')
-const mailer = require('../util/email')
-const async = require('async')
-const crypto = require('crypto')
+const MailerUtil = require('../util/email')
+const TokenUtil = require('../util/token')
 require('dotenv').config()
 
 //Load Input Validation
@@ -40,7 +39,7 @@ exports.registerUser = (req, res, next) => {
             .save()
             .then(user =>{
                 const msg = `<b>Hello ${user.email}<b><br /><p> Thank you for registering with us</p><br /> <p><i> Team Avengers </i></p>`
-                mailer.sendMail(user.email, 'Registration Successful', msg ).then((e) => {
+                MailerUtil.sendMail(user.email, 'Registration Successful', msg ).then((e) => {
                   res.status(200).send({ success: true, data: user })
                 }).catch(() => {
                   res.status(200).send({ success: true, data: user })
@@ -77,15 +76,7 @@ exports.loginUser = (req, res, next) => {
           return res.status(403).send({ response: 'Incorrect username or password' })
         }
 
-        const token = jwt.sign(
-          {
-            email
-          },
-          process.env.SECRET_TOKEN,
-          {
-            expiresIn: '4800s'
-          }
-        )
+        const token = TokenUtil.signedToken(email);
 
         return res.status(200).send({
           success: true,
@@ -110,7 +101,7 @@ exports.checkToken = (req, res, next) => {
 }
 
 exports.resetPassword = (req, res) => {
-  const { errors, isValid } = validateRegisterInput(req.body)
+  const { errors, isValid } = validateResetInput(req.body)
 
   //Check Validation
   if (!isValid) {
@@ -133,7 +124,7 @@ exports.resetPassword = (req, res) => {
             user.password = pwHash;
             user.save((err, data) => {
               const msg = `<b>Hello ${email}<b><br /><p> Your password was succefully changed, if you did't initialize this, please contact us</p><br /> <p><i> Team Avengers </i></p>`
-              mailer.sendMail(email, 'Password Changed', msg ).then((e) => {
+              MailerUtil.sendMail(email, 'Password Changed', msg ).then((e) => {
                 return res.status(200).send({ success: true, response: 'Password successfully reset'})
               }).catch(() => {
                 return res.status(200).send({ success: true, response: 'Password successfully reset'})
@@ -146,12 +137,6 @@ exports.resetPassword = (req, res) => {
   })
 }
 
-async function generateEmailToken(){
-  let token = await crypto.randomBytes(20);
-  token = token.toString('hex');
-  return token;
-}
-
 exports.reset = async (req, res) => {
   const { errors, isValid } = validateForgetInput(req.body)
 
@@ -161,7 +146,7 @@ exports.reset = async (req, res) => {
   }
 
   const {email} = req.body;
-  const token = await generateEmailToken();
+  const token = await TokenUtil.generateEmailToken();
 
   User.findOne({ email: req.body.email }, function(err, user) {
     if (!user) {
@@ -171,16 +156,16 @@ exports.reset = async (req, res) => {
       user.resetPasswordToken = token;
       user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
-      user.save().then(user) => {
+      const urll = `${req.headers.host}/api/v1/change-password/${token}`;
+      console.log(urll);
+
+      user.save((err, data) => {
         const subject = 'Password Reset Link';
-        const msg = 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-          'http://' + req.headers.host + '/api/v1/change-password/' + token + '\n\n' +
-          'If you did not request this, please ignore this email and your password will remain unchanged.\n';
-        mailer.sendMail(user.email, 'Registration Successful', msg ).then((e) => {
-          res.status(200).send({ success: true, response: 'Email sent' })
+        const msg = `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\nPlease click on the following link, or paste this into your browser to complete the process:\n\n${urll}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`;
+        MailerUtil.sendMail(user.email, subject, msg ).then((e) => {
+          res.status(200).send({ success: true, url: urll, msg })
         }).catch(() => {
-          res.status(400).send({ success: true, response: 'Email not sent' })
+          res.status(200).send({ success: true, url: urll, msg })
         })
       })
     }
@@ -192,7 +177,7 @@ exports.changePassword = function(req, res) {
 
   //Check Validation
   if (!isValid) {
-    return res.status(400).send({ response: errors })
+    return res.status(403).send({ response: errors })
   }
 
   const {password} = req.body;
@@ -217,20 +202,17 @@ exports.changePassword = function(req, res) {
         user.resetPasswordExpires = null;
         user.password = hash
 
-        user.save().then((err, user) => {
-          if(err){
-            console.log(err);
-          }
+        user.save((err, data) => {
           const subject = 'Password Changed';
-          const msg = 'Hello,\n\n' +
-            'This is a confirmation that the password for your account ' + user.username + ' has just been changed.\n';
-          mailer.sendMail(user.email, subject, msg ).then((e) => {
+          const msg = `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`;
+          MailerUtil.sendMail(user.email, subject, msg ).then((e) => {
             res.status(200).send({ success: true, response: 'Password changed' })
           }).catch(() => {
             res.status(200).send({ success: true, response: 'Password changed' })
           })
+          res.status(200).send('changed');
         })
       })
-    }) 
-  });
+    })
+  }) 
 }

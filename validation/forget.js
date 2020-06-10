@@ -1,10 +1,10 @@
 const Validator = require('validator')
 const isEmpty = require('./isEmpty')
 
-module.exports = function validateRegisterInput (data) {
+module.exports = function validateForgetInput (data) {
   let errors = {}
 
-    data.email = !isEmpty(data.email) ? data.data.email : ''
+    data.email = !isEmpty(data.email) ? data.email : ''
 
     if (Validator.isEmpty(data.email)) {
         errors.old_password = 'Email address is required'

@@ -1,6 +1,7 @@
 const {google} = require('googleapis')
 require('dotenv').config()
-const jwt = require('jsonwebtoken')
+const MailerUtil = require('../util/email')
+const TokenUtil = require('../util/token')
 const User = require('../models/user.model')
 const OAuth2Client =google.auth.OAuth2
 
@@ -45,20 +46,6 @@ exports.urlGoogle = (req, res) => {
     res.status(201).send({success: true, response: url})
 }
 
-//sign email
-function JWTsigned(email){
-    const token = jwt.sign(
-        {
-            email
-        },
-        process.env.SECRET_TOKEN,
-        {
-            expiresIn: '4800s'
-        }
-    )
-    return token
-}
-
 //response from login
 exports.getGoogleAccountFromCode = async (req, res) => {
     const data = await auth.getToken(req.params.code);
@@ -75,7 +62,7 @@ exports.getGoogleAccountFromCode = async (req, res) => {
         if(res){
             return res.status(200).send({
                 success: true,
-                token: JWTsigned(userGoogleEmail)
+                token: TokenUtil.signedToken(userGoogleEmail)
             })
         }else{
             const newUser = new User({
@@ -88,7 +75,7 @@ exports.getGoogleAccountFromCode = async (req, res) => {
                     if (err) throw err
                     newUser.password = hash
                     newUser.save().then(user => {
-                        res.status(200).send({ success: true, token: JWTsigned(userGoogleEmail)}) 
+                        res.status(200).send({ success: true, token: TokenUtil.signedToken(userGoogleEmail)}) 
                     }).catch(err => console.log(err))
                 })
             })
