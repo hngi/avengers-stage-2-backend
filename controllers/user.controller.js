@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const User = require('../models/user.model')
+const mailer = require('../util/email')
 require('dotenv').config()
 
 //Load Input Validation
@@ -33,10 +34,14 @@ exports.registerUser = (req, res, next) => {
           newUser.password = hash
           newUser
             .save()
-            .then(user =>
-              res
-                .status(200)
-                .send({ success: true, data: user })
+            .then(user =>{
+                const msg = `<b>Hello ${user.email}<b><br /><p> Thank you for registering with us</p><br /> <p><i> Team Avengers </i></p>`
+                mailer.sendMail(user.email, 'Registration Successful', msg ).then((e) => {
+                  res.status(200).send({ success: true, data: user })
+                }).catch(() => {
+                  res.status(200).send({ success: true, data: user })
+                })
+              }
             )
             .catch(err => console.log(err))
         })
@@ -107,7 +112,7 @@ exports.resetPassword = (req, res) => {
   if (!isValid) {
     return res.status(400).send({ response: errors })
   }
-  
+
   const {old_password, new_password, confirm_password} = req.body;
   jwt.verify(req.token, process.env.SECRET_TOKEN, (err, userData) => {
     if(err) {
@@ -123,7 +128,12 @@ exports.resetPassword = (req, res) => {
             if(err) throw err;
             user.password = pwHash;
             user.save((err, data) => {
-              return res.status(200).send({ success: true, response: 'Password successfully reset'})
+              const msg = `<b>Hello ${email}<b><br /><p> Your password was succefully changed, if you did't initialize this, please contact us</p><br /> <p><i> Team Avengers </i></p>`
+              mailer.sendMail(email, 'Password Changed', msg ).then((e) => {
+                return res.status(200).send({ success: true, response: 'Password successfully reset'})
+              }).catch(() => {
+                return res.status(200).send({ success: true, response: 'Password successfully reset'})
+              })
             })
           })
         })
