@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'authentify.apps.AuthentifyConfig',
+    'authapi',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
