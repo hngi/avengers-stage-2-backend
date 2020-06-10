@@ -19,7 +19,7 @@ passport.serializeUser(function(user, done) {
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_IDD,
     clientSecret: process.env.GOOGLE_CLIENT_SECRETT,
-    callbackURL:  'http://localhost:3000/api/auth/google/callback',
+    callbackURL:  'http://localhost:3000/api/v1/google/callback',
     //accessType: 'offline',
     //passReqToCallback   : true,
     userProfileURL:'https://www.googleapis.com/oauth2/v3/userinfo'
@@ -32,13 +32,13 @@ passport.serializeUser(function(user, done) {
     });
   }
   ));
-router.get('/api/auth/google/callback',passport.authenticate('google'),
+router.get('/api/v1/google/callback',passport.authenticate('google'),
 function(req, res) {
     
   res.json({success: true, message: 'success'}) 
  
 })
-router.get('/auth/google', 
+router.get('/v1/google', 
 passport.authenticate('google', {
   scope: ['profile', 'email']
 })
