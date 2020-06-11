@@ -4,9 +4,8 @@ S/N ||  SLACK USERNAME  ||       SLACK EMAIL ADDRESS              ||
 =========================================================================
 1       Hackinwale          hackinwale.developer@gmail.com 
 2       Okaks               bokakwu@gmail.com
-3      lasunkanmi          olaoluwabenjamin99@gmail.com
 3       aveira              aveirahabeeb@gmail.com
-4
+4       lasunkanmi          olaoluwabenjamin99@gmail.com
 5
 6
 7
