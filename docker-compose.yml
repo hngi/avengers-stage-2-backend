@@ -14,4 +14,4 @@ services:
     volumes:
       - ./data:/data/db
     ports:
-      - "27017"
+      - "5100:27017"
