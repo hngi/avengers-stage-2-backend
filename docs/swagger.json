@@ -3,7 +3,7 @@
   "info": {
     "description": "Swagger API for Authentication - HNGi7",
     "version": "1.0.0",
-    "title": "Auth"
+    "title": "Authentication"
   },
   "servers": [
     {
@@ -11,9 +11,6 @@
     },
     {
       "url": "https://hngi7-team-avengers.herokuapp.com/v1"
-    },
-    {
-      "url": "http://auth.microserver.dev/v1"
     }
   ],
   "tags": [
@@ -23,6 +20,41 @@
     }
   ],
   "paths": {
+    "/configure": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Configure",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["company_id"],
+                "properties": {
+                  "company_id": {
+                    "type": "string",
+                    "minLength": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created"
+          },
+          "400": {
+            "description": "If email already exists, fields are not supplied, password is less than 5 characters, password does not equals confirm password"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+
     "/register": {
       "post": {
         "tags": ["User"],
@@ -119,6 +151,39 @@
           },
           "403": {
             "description": "If username or password is incorrect"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+
+    "/authenticate": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Authenticate user token",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login succesful!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Login"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If required parameters are missing"
+          },
+          "403": {
+            "description": "If unable to rest password, password incorrect or password do not match"
           },
           "500": {
             "description": "Server Error"
@@ -286,7 +351,7 @@
     "/google/callback": {
       "get": {
         "tags": ["User"],
-        "summary": "",
+        "summary": "Google callback",
         "responses": {
           "200": {
             "description": "If operation is successful"
@@ -299,8 +364,27 @@
           }
         }
       }
+    },
+
+    "/documentation": {
+      "get": {
+        "tags": ["User"],
+        "summary": "JSON Documentation",
+        "responses": {
+          "200": {
+            "description": "JSON format of the documentation"
+          },
+          "400": {
+            "description": "If there is an error in signing a user in"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
     }
   },
+
   "components": {
     "securitySchemes": {
       "ApiKeyAuth": {
@@ -332,6 +416,9 @@
         "properties": {
           "success": {
             "type": "boolean"
+          },
+          "userID": {
+            "type": "string"
           },
           "token": {
             "type": "string"
