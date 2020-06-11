@@ -5,6 +5,10 @@ const swaggerUI = require('swagger-ui-express');
 const swaggerDocument = require('./docs/swagger.json');
 require('dotenv').config()
 
+//added cors after running npm install cors
+const cors = require('cors')
+app.use(cors())
+
 //Call in the routes
 const users = require('./routers/users.route')
 
