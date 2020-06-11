@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const User = require('../models/user.model')
-const MailerUtil = require('../mail/index')
 const TokenUtil = require('../util/token')
 require('dotenv').config()
 
@@ -76,10 +75,12 @@ exports.loginUser = (req, res, next) => {
           return res.status(403).send({ response: 'Incorrect username or password' })
         }
 
+        const userID = user._id;
         const token = TokenUtil.signedJWT(email);
 
         return res.status(200).send({
           success: true,
+          userID,
           token
         })
       })
@@ -100,6 +101,22 @@ exports.checkToken = (req, res, next) => {
   }
 }
 
+exports.authenticate = (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_TOKEN, async (err, userData) => {
+    if(err) {
+      res.status(401).json({response: 'Unauthorised access'});
+    } else {
+      const { email } = userData;
+      try {
+        let user = await User.findOne({ email });
+        return res.status(200).send({ success: true, userID: user._id, token: req.token })
+      } catch (e) {
+        res.status(401).json({ response: 'Unauthorised access' });
+      }
+    }
+  })
+}
+
 exports.resetPassword = (req, res) => {
   const { errors, isValid } = validateResetInput(req.body)
 
@@ -108,10 +125,10 @@ exports.resetPassword = (req, res) => {
     return res.status(400).send({ response: errors })
   }
 
-  const {old_password, new_password} = req.body;
+  const { old_password, new_password } = req.body;
   jwt.verify(req.token, process.env.SECRET_TOKEN, async (err, userData) => {
-    if(err) {
-      res.status(401).json({response: 'Unauthorised access'});
+    if (err) {
+      res.status(401).json({ response: 'Unauthorised access' });
     } else {
       const { email } = userData;
       try {
@@ -122,12 +139,7 @@ exports.resetPassword = (req, res) => {
             let hashedPassword = await bcrypt.hash(new_password, 10)
             user.password = hashedPassword;
             user = await user.save()
-            // const msg = `<b>Hello ${email}<b><br /><p> Your password was succefully changed, if you did't initialize this, please contact us</p><br /> <p><i> Team Avengers </i></p>`
-            // MailerUtil.sendMail(email, 'Password Changed', msg).then((e) => {
-            //   return res.status(200).send({ success: true, response: 'Password successfully reset' })
-            // }).catch(() => {
-              return res.status(200).send({ success: true, response: 'Password successfully reset' })
-            // })
+            return res.status(200).send({ success: true, response: 'Password successfully reset' })
           } else {
             res.status(403).send({ response: 'Incorrect old password' });
           }
@@ -135,15 +147,10 @@ exports.resetPassword = (req, res) => {
           let hashedPassword = await bcrypt.hash(new_password, 10)
           user.password = hashedPassword;
           user = await user.save();
-          // const msg = `<b>Hello ${email}<b><br /><p> Your password was succefully changed, if you did't initialize this, please contact us</p><br /> <p><i> Team Avengers </i></p>`
-          // MailerUtil.sendMail(email, 'Password Changed', msg).then((e) => {
-          //   return res.status(200).send({ success: true, response: 'Password successfully reset' })
-          // }).catch(() => {
-            return res.status(200).send({ success: true, response: 'Password successfully reset' })
-          // })
+          return res.status(200).send({ success: true, response: 'Password successfully reset' })
         }
       } catch (e) {
-        
+
       }
     }
   })
@@ -172,13 +179,7 @@ exports.reset = async (req, res) => {
       console.log(url);
 
       user.save((err, data) => {
-        // const subject = 'Password Reset Link';
-        // const msg = `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\nPlease click on the following link, or paste this into your browser to complete the process:\n\n${urll}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`;
-        // MailerUtil.sendMail(user.email, subject, msg ).then((e) => {
-        //   res.status(200).send({ success: true, url: urll, msg })
-        // }).catch(() => {
-          res.status(200).send({ success: true, url, msg })
-        // })
+        res.status(200).send({ success: true, url, msg })
       })
     }
   });
@@ -215,13 +216,7 @@ exports.changePassword = function(req, res) {
         user.password = hash
 
         user.save((err, data) => {
-          const subject = 'Password Changed';
-          const msg = `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`;
-          MailerUtil.sendMail(user.email, subject, msg ).then((e) => {
-            res.status(200).send({ success: true, response: 'Password changed' })
-          }).catch(() => {
-            res.status(200).send({ success: true, response: 'Password changed' })
-          })
+          res.status(200).send({ success: true, response: 'Password changed' })
         })
       })
     })

@@ -65,6 +65,7 @@ exports.getGoogleAccountFromCode = async (req, res) => {
         if (user){
             return res.status(200).send({
                 success: true,
+                userID: used._id,
                 token: TokenUtil.signedJWT(email)
             })
         } else {
@@ -73,7 +74,7 @@ exports.getGoogleAccountFromCode = async (req, res) => {
                 googleId
             });
             user = await newUser.save();
-            res.status(200).send({ success: true, token: TokenUtil.signedJWT(email)});
+            res.status(200).send({ success: true, userID: used._id, token: TokenUtil.signedJWT(email)});
         }             
     } catch (e) {
         res.status(400).send({response: "Error signing you in"});
