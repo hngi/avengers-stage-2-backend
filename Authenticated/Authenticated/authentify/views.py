@@ -1,3 +1,15 @@
+# Create your views here.
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+import requests, json
+from django.shortcuts import HttpResponse
+from django.contrib.sites.shortcuts import get_current_site
+
+
+
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
@@ -37,3 +49,61 @@ class CustomConfirmEmailView(ConfirmEmailView):
         user = get_user_model().objects.get(email=self.object.email_address.email)
         redirect_url = reverse('user', args=(user.id,))
         return redirect(redirect_url)
+
+
+class RegistrationView(APIView):
+    
+    def post(self, request):
+        r = requests.post(f'{get_current_site(request)}/dj-rest-auth/registration/', data=request.POST)
+        return HttpResponse(r.content)
+
+
+class LoginView(APIView):
+    
+    def post(self, request):
+        r = requests.post(f'{get_current_site(request)}/dj-rest-auth/login/', data=request.POST)
+        return HttpResponse(r.content)
+
+class LogoutView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        r = requests.post(f'{get_current_site(request)}/dj-rest-auth/logout/')
+        return Response(r.content)
+
+
+class HelloView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        content = {'message': 'Hello, World!'}
+        # return HttpResponse(json.dumps(content))
+        return Response(content)
+
+
+class ResetEmailView(APIView):
+    def post(self, request):
+        r = requests.post(f'{get_current_site(request)}/dj-rest-auth/password/reset/', data=request.POST)
+        return Response(r.content)
+
+class ConfirmView(APIView):
+    def get(self, request, uidb64, token):
+        data = {'uid': uidb64, "token": token}
+        return Response(data)
+
+
+
+class UserView(APIView):
+    
+    def post(self, request):
+        r = requests.post(f'{get_current_site(request)}/dj-rest-auth/user/', data=request.POST)
+        return Response(r.content)
+
+    def get(self, request):
+        r = requests.get(f'{get_current_site(request)}/dj-rest-auth/user/', data=request.GET)
+        return Response(r.content)
+
+class VerifyEmailView(APIView):
+    def get(self, request, key):
+        r = requests.post(f'{get_current_site(request)}/dj-rest-auth/registration/verify-email/', data={"key":key})
+        return Response(r.content)
