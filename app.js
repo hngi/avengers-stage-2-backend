@@ -34,7 +34,7 @@ app.use(express.urlencoded({ extended: false }))
 app.get('/', (req, res)=> {
   res.redirect('/api-docs');
 })
-app.use('/api', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use('/v1', users);
 
 
