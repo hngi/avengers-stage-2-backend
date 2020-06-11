@@ -1,14 +1,13 @@
 const {google} = require('googleapis')
 require('dotenv').config()
-const MailerUtil = require('../util/email')
 const TokenUtil = require('../util/token')
 const User = require('../models/user.model')
 const OAuth2Client =google.auth.OAuth2
 
 //Config google api
 const googleConfig = {
-    clientId: process.env.GSOOGLE_CLIENT_ID, 
-    clientSecret: process.env.GSOOGLE_CLIENT_SECRET,
+    clientId: process.env.GOOGLE_CLIENT_ID, 
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     redirect: process.env.GOOGLE_REDIRECT_URL,
 };
 
