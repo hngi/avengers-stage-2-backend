@@ -38,12 +38,12 @@ exports.registerUser = (req, res, next) => {
           newUser
             .save()
             .then(user =>{
-                const msg = `<b>Hello ${user.email}<b><br /><p> Thank you for registering with us</p><br /> <p><i> Team Avengers </i></p>`
-                MailerUtil.sendMail(user.email, 'Registration Successful', msg ).then((e) => {
+                // const msg = `<b>Hello ${user.email}<b><br /><p> Thank you for registering with us</p><br /> <p><i> Team Avengers </i></p>`
+                // MailerUtil.sendMail(user.email, 'Registration Successful', msg ).then((e) => {
+                //   res.status(200).send({ success: true, data: user })
+                // }).catch(() => {
                   res.status(200).send({ success: true, data: user })
-                }).catch(() => {
-                  res.status(200).send({ success: true, data: user })
-                })
+                // })
               }
             )
             .catch(err => console.log(err))
@@ -116,13 +116,12 @@ exports.resetPassword = (req, res) => {
       const { email } = userData;
       try {
         let user = await User.findOne({ email });
-        if (user.password) {
+        if (!user.password) {
           let isPasswordMatched = await bcrypt.compare(old_password, user.password)
           if (isPasswordMatched) {
             let hashedPassword = await bcrypt.hash(new_password, 10)
             user.password = hashedPassword;
             user = await user.save()
-            console.log('user', user);
             // const msg = `<b>Hello ${email}<b><br /><p> Your password was succefully changed, if you did't initialize this, please contact us</p><br /> <p><i> Team Avengers </i></p>`
             // MailerUtil.sendMail(email, 'Password Changed', msg).then((e) => {
             //   return res.status(200).send({ success: true, response: 'Password successfully reset' })
@@ -135,7 +134,7 @@ exports.resetPassword = (req, res) => {
         } else {
           let hashedPassword = await bcrypt.hash(new_password, 10)
           user.password = hashedPassword;
-          await user.save()
+          user = await user.save();
           // const msg = `<b>Hello ${email}<b><br /><p> Your password was succefully changed, if you did't initialize this, please contact us</p><br /> <p><i> Team Avengers </i></p>`
           // MailerUtil.sendMail(email, 'Password Changed', msg).then((e) => {
           //   return res.status(200).send({ success: true, response: 'Password successfully reset' })

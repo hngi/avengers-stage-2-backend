@@ -6,9 +6,9 @@ const OAuth2Client =google.auth.OAuth2
 
 //Config google api
 const googleConfig = {
-    clientId: process.env.GOOGLE_CLIENT_IDD, 
-    clientSecret: process.env.GSOOGLE_CLIENT_SECRETT,
-    redirect: 'http://localhost:3000/api/v1/google/callback',
+    clientId: process.env.GOOGLE_CLIENT_ID, 
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    redirect: process.env.GOOGLE_REDIRECT_URL,
 };
 
 //Google Scope
