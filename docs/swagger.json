@@ -7,6 +7,9 @@
   },
   "servers": [
     {
+      "url": "http://auth.microapi.dev/v1"
+    },
+    {
       "url": "https://hngi7-team-avengers.herokuapp.com/v1"
     },
     {

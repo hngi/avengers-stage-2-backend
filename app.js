@@ -14,9 +14,9 @@ let db = process.env.MONGODB_URI
 
 //switch between docker image and atlas
 //Please uncomment this to use to work for docker
-// if (process.env.DOCKER_DB) {
-//   db = process.env.DOCKER_DB;
-// }
+if (process.env.DOCKER_DB) {
+  db = process.env.DOCKER_DB;
+}
 
 //db connection
 mongoose
@@ -32,7 +32,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.get('/', (req, res)=> {
-  res.redirect('/api');
+  res.redirect('/api-docs');
 })
 app.use('/api', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use('/v1', users);
