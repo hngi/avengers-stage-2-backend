@@ -76,10 +76,12 @@ exports.loginUser = (req, res, next) => {
           return res.status(403).send({ response: 'Incorrect username or password' })
         }
 
+        const userID = user._id;
         const token = TokenUtil.signedJWT(email);
 
         return res.status(200).send({
           success: true,
+          userID,
           token
         })
       })

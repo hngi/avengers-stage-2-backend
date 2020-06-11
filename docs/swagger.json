@@ -7,7 +7,10 @@
   },
   "servers": [
     {
-      "url": "https://hngi7-team-avengers.herokuapp.com/api/v1"
+      "url": "https://hngi7-team-avengers.herokuapp.com/v1"
+    },
+    {
+      "url": "http://auth.microserver.dev/v1"
     }
   ],
   "tags": [
@@ -38,7 +41,7 @@
                     "type": "string",
                     "minLength": 5
                   },
-                  "confirm_password": {
+                  "confirmPassword": {
                     "type": "string",
                     "minLength": 5
                   }
