@@ -3,11 +3,14 @@
   "info": {
     "description": "Swagger API for Authentication - HNGi7",
     "version": "1.0.0",
-    "title": "Auth"
+    "title": "Authentication"
   },
   "servers": [
     {
-      "url": "http://localhost:3000/api/v1"
+      "url": "http://auth.microapi.dev/v1"
+    },
+    {
+      "url": "https://hngi7-team-avengers.herokuapp.com/v1"
     }
   ],
   "tags": [
@@ -17,11 +20,44 @@
     }
   ],
   "paths": {
+    "/configure": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Configure",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["company_id"],
+                "properties": {
+                  "company_id": {
+                    "type": "string",
+                    "minLength": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created"
+          },
+          "400": {
+            "description": "If email already exists, fields are not supplied, password is less than 5 characters, password does not equals confirm password"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+
     "/register": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Registers a new user",
         "requestBody": {
           "required": true,
@@ -29,11 +65,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email",
-                  "password",
-                  "confirm_password"
-                ],
+                "required": ["email", "password", "confirmPassword"],
                 "properties": {
                   "email": {
                     "type": "string",
@@ -42,11 +74,11 @@
                   },
                   "password": {
                     "type": "string",
-                    "minLength": 4
+                    "minLength": 5
                   },
-                  "confirm_password": {
+                  "confirmPassword": {
                     "type": "string",
-                    "minLength": 4
+                    "minLength": 5
                   }
                 }
               }
@@ -74,13 +106,9 @@
       }
     },
 
-
-
     "/login": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Logins a registered user",
         "requestBody": {
           "required": true,
@@ -88,10 +116,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email",
-                  "password"
-                ],
+                "required": ["email", "password"],
                 "properties": {
                   "email": {
                     "type": "string",
@@ -100,7 +125,7 @@
                   },
                   "password": {
                     "type": "string",
-                    "minLength": 4
+                    "minLength": 5
                   }
                 }
               }
@@ -134,13 +159,42 @@
       }
     },
 
-
+    "/authenticate": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Authenticate user token",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login succesful!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Login"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If required parameters are missing"
+          },
+          "403": {
+            "description": "If unable to rest password, password incorrect or password do not match"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
 
     "/reset-password": {
       "post": {
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "summary": "Resets password",
         "security": [
           {
@@ -191,164 +245,146 @@
           }
         }
       }
-   },
+    },
 
-
-
-
-  "/forget-password": {
-    "post": {
-      "tags": [
-        "User"
-      ],
-      "summary": "Sends reset link to mail if user forgets password",
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": [
-                "email"
-              ],
-              "properties": {
-                "email": {
-                  "type": "string",
-                  "minLength": 4,
-                  "pattern": "/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/"
+    "/forget-password": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Sends reset link to mail if user forgets password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "minLength": 4,
+                    "pattern": "/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/"
+                  }
                 }
               }
             }
           }
+        },
+        "responses": {
+          "200": {
+            "description": "If reset link is successfully sent"
+          },
+          "400": {
+            "description": "If there are missing required parameter or the email address does not exist"
+          },
+          "500": {
+            "description": "Server Error"
+          }
         }
-      },
-      "responses": {
-        "200": {
-          "description": "If reset link is successfully sent"
+      }
+    },
+
+    "/change-password/{token}": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Changes user password",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["password"],
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "minLength": 4
+                  }
+                }
+              }
+            }
+          }
         },
-        "400": {
-          "description": "If there are missing required parameter or the email address does not exist"
-        },
-        "500": {
-          "description": "Server Error"
+        "responses": {
+          "200": {
+            "description": "If password change is successful"
+          },
+          "400": {
+            "description": "If password reset token is invalid or has expired or there is an error changing passwor"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+
+    "/google/signin": {
+      "get": {
+        "tags": ["User"],
+        "summary": "signs in with google account",
+        "responses": {
+          "201": {
+            "description": "If operation is successful"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+
+    "/google/callback": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Google callback",
+        "responses": {
+          "200": {
+            "description": "If operation is successful"
+          },
+          "400": {
+            "description": "If there is an error in signing a user in"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+
+    "/documentation": {
+      "get": {
+        "tags": ["User"],
+        "summary": "JSON Documentation",
+        "responses": {
+          "200": {
+            "description": "JSON format of the documentation"
+          },
+          "400": {
+            "description": "If there is an error in signing a user in"
+          },
+          "500": {
+            "description": "Server Error"
+          }
         }
       }
     }
   },
 
-
-  "/change-password/{token}": {
-    "post": {
-      "tags": [
-        "User"
-      ],
-      "summary": "Changes user password",
-      "security": [
-        {
-          "ApiKeyAuth": []
-        }
-      ],
-      "parameters": [
-        {
-          "name": "token",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": [
-                "password"
-              ],
-              "properties": {
-                "password": {
-                  "type": "string",
-                  "minLength": 4
-                }
-              }
-            }
-          }
-        }
-      },
-      "responses": {
-        "200": {
-          "description": "If password change is successful"
-        },
-        "400": {
-          "description": "If password reset token is invalid or has expired or there is an error changing passwor"
-        },
-        "500": {
-          "description": "Server Error"
-        }
-      }
-    }
-  },  
-
-
-
-  "/google-signin": {
-    "get": {
-      "tags": [
-        "User"
-      ],
-      "summary": "signs in with google account",
-      "responses": {
-        "201": {
-          "description": "If operation is successful"
-        },
-        "500": {
-          "description": "Server Error"
-        }
-      }
-    }
-  },
-
-
-
-  "/google/callback/{code}": {
-    "post": {
-      "tags": [
-        "User"
-      ],
-      "summary": "",
-      "security": [
-        {
-          "ApiKeyAuth": []
-        }
-      ],
-      "parameters": [
-        {
-          "name": "code",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "If operation is successful"
-        },
-        "400": {
-          "description": "If there is an error in signing a user in"
-        },
-        "500": {
-          "description": "Server Error"
-        }
-      }
-    }
-  }
-
-
-},
   "components": {
     "securitySchemes": {
       "ApiKeyAuth": {
@@ -357,59 +393,61 @@
         "name": "authorization"
       }
     },
-  "schemas": {
-    "Register": {
-      "type":"object",
-      "properties": {
-        "success": {
-          "type": "boolean"
-        },
-        "_id": { 
-          "type": "string"
-        },
-        "email": { 
-          "type": "string"
-        },
-        "password": { 
-          "type": "string"
+    "schemas": {
+      "Register": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
         }
-      }
-    },
-    "Login": {
-      "type":"object",
-      "properties": {
-        "success": {
-          "type": "boolean"
-        },
-        "token": { 
-          "type": "string"
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "userID": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
         }
-      }
-    },
-    "User": {
-      "type": "object",
-      "properties": {
-        "token": {
-          "type": "string"
-        },
-        "id": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "old_password": {
-          "type": "string"
-        },
-        "new_password": {
-          "type": "string"
-        },
-        "confirm_password": {
-          "type": "string"
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "old_password": {
+            "type": "string"
+          },
+          "new_password": {
+            "type": "string"
+          },
+          "confirmPassword": {
+            "type": "string"
+          }
         }
       }
     }
   }
 }
-}
-

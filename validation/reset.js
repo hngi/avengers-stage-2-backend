@@ -4,13 +4,8 @@ const isEmpty = require('./isEmpty')
 module.exports = function validateResetInput (data) {
   let errors = {}
 
-    data.old_password = !isEmpty(data.old_password) ? data.old_password : ''
     data.new_password = !isEmpty(data.new_password) ? data.new_password : ''
     data.confirm_password = !isEmpty(data.confirm_password) ? data.confirm_password: ''
-
-    if (Validator.isEmpty(data.old_password)) {
-        errors.old_password = 'Old password is required'
-    }
 
     if (Validator.isEmpty(data.new_password)) {
         errors.new_password = 'New Password is required'
