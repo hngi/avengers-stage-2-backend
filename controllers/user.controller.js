@@ -14,6 +14,7 @@ const {
   validateForgetInput,
   validateChangeInput,
 } = require("../validation");
+
 const forgotPasswordTemplate = require("../services/templates/forgotPasswordTemplate");
 const { generateToken } = require("../services/auth");
 
@@ -255,7 +256,6 @@ exports.changePassword = function(req, res) {
 
 exports.forgotPassword = async (req, res) => {
   const { errors, isValid } = validateForgotPassword(req.body);
-
   // validate user's payload
   if (!isValid) {
     return res.status(400).json(errors);
@@ -271,10 +271,8 @@ exports.forgotPassword = async (req, res) => {
 
     const token = generateToken({ email }, "1h");
 
-    const subject = "Password reset";
     const msg = forgotPasswordTemplate(token, user.name, req.headers.host);
-    const e = await MailerUtil.sendMail(user.email, subject, msg);
-    console.log("sengrid succeful", e);
+    await MailerUtil.sendMail(user.email, "Password reset", msg);
 
     return res.status(200).send({
       message: "kindly check your email for a password reset link",
@@ -284,3 +282,4 @@ exports.forgotPassword = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
+

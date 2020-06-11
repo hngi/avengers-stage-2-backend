@@ -26,7 +26,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("connected");
+    console.log("Mongodb connected");
   })
   .catch((error) => {
     console.log(error);
@@ -42,5 +42,5 @@ app.use("/api/v1", users);
 
 //open the port
 app.listen(PORT, () => {
-  console.log("Server Running!!!!");
+  console.log("Server Running on port", PORT);
 });
