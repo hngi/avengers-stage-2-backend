@@ -108,31 +108,44 @@ exports.resetPassword = (req, res) => {
     return res.status(400).send({ response: errors })
   }
 
-  const {old_password, new_password, confirm_password} = req.body;
-  jwt.verify(req.token, process.env.SECRET_TOKEN, (err, userData) => {
+  const {old_password, new_password} = req.body;
+  jwt.verify(req.token, process.env.SECRET_TOKEN, async (err, userData) => {
     if(err) {
-      res.status(403).json({response: 'Unable to reset password'});
+      res.status(401).json({response: 'Unauthorised access'});
     } else {
-      const {email} = userData;
-      User.findOne({email}, (err, user) => {
-        bcrypt.compare(req.body.old_password, user.password, function(err, result) {
-          
-          if (!result) return res.status(403).send({response: 'Incorrect password'});
-          if (new_password !== confirm_password) return res.status(403).send({ response: 'Passwords do not match.' })
-          bcrypt.hash(new_password, 10, (err, pwHash) => {
-            if(err) throw err;
-            user.password = pwHash;
-            user.save((err, data) => {
-              const msg = `<b>Hello ${email}<b><br /><p> Your password was succefully changed, if you did't initialize this, please contact us</p><br /> <p><i> Team Avengers </i></p>`
-              MailerUtil.sendMail(email, 'Password Changed', msg ).then((e) => {
-                return res.status(200).send({ success: true, response: 'Password successfully reset'})
-              }).catch(() => {
-                return res.status(200).send({ success: true, response: 'Password successfully reset'})
-              })
-            })
-          })
-        })
-      })
+      const { email } = userData;
+      try {
+        let user = await User.findOne({ email });
+        if (user.password) {
+          let isPasswordMatched = await bcrypt.compare(old_password, user.password)
+          if (isPasswordMatched) {
+            let hashedPassword = await bcrypt.hash(new_password, 10)
+            user.password = hashedPassword;
+            user = await user.save()
+            console.log('user', user);
+            // const msg = `<b>Hello ${email}<b><br /><p> Your password was succefully changed, if you did't initialize this, please contact us</p><br /> <p><i> Team Avengers </i></p>`
+            // MailerUtil.sendMail(email, 'Password Changed', msg).then((e) => {
+            //   return res.status(200).send({ success: true, response: 'Password successfully reset' })
+            // }).catch(() => {
+              return res.status(200).send({ success: true, response: 'Password successfully reset' })
+            // })
+          } else {
+            res.status(403).send({ response: 'Incorrect old password' });
+          }
+        } else {
+          let hashedPassword = await bcrypt.hash(new_password, 10)
+          user.password = hashedPassword;
+          await user.save()
+          // const msg = `<b>Hello ${email}<b><br /><p> Your password was succefully changed, if you did't initialize this, please contact us</p><br /> <p><i> Team Avengers </i></p>`
+          // MailerUtil.sendMail(email, 'Password Changed', msg).then((e) => {
+          //   return res.status(200).send({ success: true, response: 'Password successfully reset' })
+          // }).catch(() => {
+            return res.status(200).send({ success: true, response: 'Password successfully reset' })
+          // })
+        }
+      } catch (e) {
+        
+      }
     }
   })
 }
@@ -146,9 +159,9 @@ exports.reset = async (req, res) => {
   }
 
   const {email} = req.body;
-  const token = await TokenUtil.generateEmailToken();
+  const token = await TokenUtil.generateEmailToken(email);
 
-  User.findOne({ email: req.body.email }, function(err, user) {
+  User.findOne({ email }, function(err, user) {
     if (!user) {
       return res.status(400).send({ response: 'No account with that email address exists.' })
     }
@@ -156,17 +169,17 @@ exports.reset = async (req, res) => {
       user.resetPasswordToken = token;
       user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
-      const urll = `${req.headers.host}/api/v1/change-password/${token}`;
-      console.log(urll);
+      const url = `${req.headers.host}/api/v1/change-password/${token}`;
+      console.log(url);
 
       user.save((err, data) => {
-        const subject = 'Password Reset Link';
-        const msg = `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\nPlease click on the following link, or paste this into your browser to complete the process:\n\n${urll}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`;
-        MailerUtil.sendMail(user.email, subject, msg ).then((e) => {
-          res.status(200).send({ success: true, url: urll, msg })
-        }).catch(() => {
-          res.status(200).send({ success: true, url: urll, msg })
-        })
+        // const subject = 'Password Reset Link';
+        // const msg = `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\nPlease click on the following link, or paste this into your browser to complete the process:\n\n${urll}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`;
+        // MailerUtil.sendMail(user.email, subject, msg ).then((e) => {
+        //   res.status(200).send({ success: true, url: urll, msg })
+        // }).catch(() => {
+          res.status(200).send({ success: true, url, msg })
+        // })
       })
     }
   });
