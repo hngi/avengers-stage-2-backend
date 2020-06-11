@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
 require("dotenv").config();
 
 exports.signedJWT = (email) => {
@@ -25,6 +24,5 @@ exports.generateEmailToken = async (email) => {
       expiresIn: "4800s",
     }
   );
-  token = token.toString("hex");
   return token;
 };
