@@ -23,7 +23,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('admin/', admin.site.urls),
     path('', include('authentify.urls')),
-    path('accounts/', include('django.contrib.auth.urls')), #this allows the user login using django built in function
+    path('accounts/', include('django.contrib.auth.urls')), # this allows the user login using django built in function
     path('api/v1/auth/', include('dj_rest_auth.urls')),
     path('api/v1/auth/register', include('dj_rest_auth.registration.urls')),
     #path(r'^api-token-auth/', obtain_jwt_token),
