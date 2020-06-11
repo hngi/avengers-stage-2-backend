@@ -3,7 +3,7 @@ HERE IS THE LIST OF CONTRIBUTORS TO MAIL UTIL
 S/N ||  SLACK USERNAME  ||       SLACK EMAIL ADDRESS              ||
 =========================================================================
 1       Hackinwale          hackinwale.developer@gmail.com 
-2
+2       Okaks               bokakwu@gmail.com
 3
 4
 5
