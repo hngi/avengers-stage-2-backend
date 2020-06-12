@@ -1,5 +1,4 @@
 """Authenticated URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
 Examples:
@@ -17,11 +16,14 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from rest_framework_jwt.views import obtain_jwt_token
 from allauth.account.views import confirm_email
+from authentify import views
 
 urlpatterns = [
+    path('', views.index, name='index'),
+    path('register/', views.register, name='register'),
     path('admin/', admin.site.urls),
     path('', include('authentify.urls')),
-    path('accounts/', include('django.contrib.auth.urls')), #this allows the user login using django built in function
+    path('accounts/', include('django.contrib.auth.urls')), # this allows the user login using django built in function
     path('api/v1/auth/', include('dj_rest_auth.urls')),
     path('api/v1/auth/register', include('dj_rest_auth.registration.urls')),
     #path(r'^api-token-auth/', obtain_jwt_token),
