@@ -3,3 +3,5 @@ package-lock.json
 store.txt
 .env
 data
+# ignore vim buffers
+*.swp
