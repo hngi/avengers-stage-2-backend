@@ -1,11 +1,20 @@
 const router = require('express').Router()
+const route = require('express').Router()
 
 const UserController = require('../controllers/user.controller')
 const GoogleController = require('../controllers/google.controller')
 const BusinessController = require('../controllers/business.controller')
 const DocController = require('../controllers/doc.controller')
 
-// router.get('/', )
+const swaggerUI = require('swagger-ui-express');
+const frontendSwaggerDocument = require('../docs/frontend-swagger.json');
+const backendSwaggerDocument = require('../docs/backend-swagger copy.json')
+
+route.use('/', swaggerUI.serve, (req, res) => {
+    let html = swaggerUI.generateHTML(frontendSwaggerDocument);
+    res.send(html);
+});
+
 router.get('/documentation', DocController.documentations);
 router.post('/configure', BusinessController.configure)
 router.post('/register', UserController.registerUser)
@@ -19,4 +28,4 @@ router.post('/forgot-password', UserController.reset)
 router.get('/google/callback', GoogleController.getGoogleAccountFromCode);
 router.post('/change-password/:token', UserController.changePassword)
 
-module.exports = router
+module.exports = { router, route }
