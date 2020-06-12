@@ -8,12 +8,12 @@ const DocController = require('../controllers/doc.controller')
 
 const swaggerUI = require('swagger-ui-express');
 const frontendSwaggerDocument = require('../docs/frontend-swagger.json');
-const backendSwaggerDocument = require('../docs/backend-swagger copy.json')
+const backendSwaggerDocument = require('../docs/backend-swagger.json')
 
-route.use('/', swaggerUI.serve, (req, res) => {
-    let html = swaggerUI.generateHTML(frontendSwaggerDocument);
-    res.send(html);
-});
+route.use('/', swaggerUI.serve);
+route.get('/', swaggerUI.setup(frontendSwaggerDocument));
+route.use('/backend', swaggerUI.serve);
+route.get('/backend', swaggerUI.setup(backendSwaggerDocument));
 
 router.get('/documentation', DocController.documentations);
 router.post('/configure', BusinessController.configure)

@@ -1,9 +1,6 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const swaggerUI = require('swagger-ui-express');
-const frontendSwaggerDocument = require('./docs/frontend-swagger.json');
-const backendSwaggerDocument = require('./docs/backend-swagger copy.json')
 const cors = require('cors')
 require('dotenv').config()
 
