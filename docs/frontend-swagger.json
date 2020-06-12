@@ -13,7 +13,7 @@
       "url": "https://hngi7-team-avengers.herokuapp.com/v1"
     },
     {
-      "url": "localhost:5000/v1"
+      "url": "http://localhost:5000/v1"
     }
   ],
   "tags": [
@@ -46,10 +46,13 @@
         },
         "responses": {
           "201": {
-            "description": "Successfully created"
+            "description": "Configuration successful"
           },
           "400": {
-            "description": "If email already exists, fields are not supplied, password is less than 5 characters, password does not equals confirm password"
+            "description": "Company ID is required"
+          },
+          "409": {
+            "description": "Company already exists"
           },
           "500": {
             "description": "Server Error"
@@ -250,7 +253,7 @@
       }
     },
 
-    "/forget-password": {
+    "/forgot-password": {
       "post": {
         "tags": ["User"],
         "summary": "Sends reset link to mail if user forgets password",
@@ -286,56 +289,6 @@
       }
     },
 
-    "/change-password/{token}": {
-      "post": {
-        "tags": ["User"],
-        "summary": "Changes user password",
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "token",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["password"],
-                "properties": {
-                  "password": {
-                    "type": "string",
-                    "minLength": 4
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "If password change is successful"
-          },
-          "400": {
-            "description": "If password reset token is invalid or has expired or there is an error changing passwor"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        }
-      }
-    },
-
     "/google/signin": {
       "get": {
         "tags": ["User"],
@@ -343,24 +296,6 @@
         "responses": {
           "201": {
             "description": "If operation is successful"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        }
-      }
-    },
-
-    "/google/callback": {
-      "get": {
-        "tags": ["User"],
-        "summary": "Google callback",
-        "responses": {
-          "200": {
-            "description": "If operation is successful"
-          },
-          "400": {
-            "description": "If there is an error in signing a user in"
           },
           "500": {
             "description": "Server Error"

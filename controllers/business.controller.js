@@ -9,13 +9,13 @@ exports.configure = (req, res, next) => {
 
     Business.findOne({ company_id }).then(business => {
         if (business) {
-            return res.status(400).send({ response:  'Company with the ID already exist' })
+            return res.status(409).send({ response:  'Company with the ID already exist' })
         } else {
             const newBusiness = new Business({
                 company_id
             })
             newBusiness.save().then(business => {
-                res.status(200).send({ success: true, business })
+                res.status(201).send({ success: true, business })
             })       
         }
     })
