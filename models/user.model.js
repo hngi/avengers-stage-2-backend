@@ -13,6 +13,8 @@ const userSchema = new Schema({
   googleId: String,
   resetPasswordToken: String,
   resetPasswordExpires: Date
-});
+},
+  {timestamps: true}
+);
 
 module.exports = User = mongoose.model('users', userSchema);
