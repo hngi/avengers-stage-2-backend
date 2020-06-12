@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const User = require('../models/user.model')
 const TokenUtil = require('../util/token')
+const httpStatus = require('http-status-codes')
 require('dotenv').config()
 
 //Load Input Validation
@@ -16,7 +17,7 @@ exports.registerUser = (req, res, next) => {
 
   //Check Validation
   if (!isValid) {
-    return res.status(400).send({ response: errors })
+    return res.status(httpStatus.BAD_REQUEST).send({ response: errors })
   }
 
   const { email, password } = req.body
@@ -24,7 +25,7 @@ exports.registerUser = (req, res, next) => {
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
       errors.email = 'Email already exists'
-      return res.status(400).send({ response:  errors })
+      return res.status(httpStatus.BAD_REQUEST).send({ response:  errors })
     } else {
       const newUser = new User({
         email,
@@ -41,7 +42,7 @@ exports.registerUser = (req, res, next) => {
                 // MailerUtil.sendMail(user.email, 'Registration Successful', msg ).then((e) => {
                 //   res.status(200).send({ success: true, data: user })
                 // }).catch(() => {
-                  res.status(200).send({ success: true, data: user })
+                  res.status(httpStatus.OK).send({ success: true, data: user })
                 // })
               }
             )
@@ -57,7 +58,7 @@ exports.loginUser = (req, res, next) => {
 
   //Check if the login is valid
   if (!isValid) {
-    return res.status(400).send({ response: errors })
+    return res.status(httpStatus.BAD_REQUEST).send({ response: errors })
   }
 
   const { email, password } = req.body
@@ -65,20 +66,20 @@ exports.loginUser = (req, res, next) => {
   User.findOne({ email }).then(user => {
 
     if (!user) {
-      return res.status(423).send({ response: 'User does not exist, kindly register!!'})
+      return res.status(httpStatus.LOCKED).send({ response: 'User does not exist, kindly register!!'})
     }
 
     bcrypt
       .compare(password, user.password)
       .then(valid => {
         if (!valid) {
-          return res.status(403).send({ response: 'Incorrect username or password' })
+          return res.status(httpStatus.FORBIDDEN).send({ response: 'Incorrect username or password' })
         }
 
         const userID = user._id;
         const token = TokenUtil.signedJWT(email);
 
-        return res.status(200).send({
+        return res.status(httpStatus.OK).send({
           success: true,
           userID,
           token
@@ -97,21 +98,21 @@ exports.checkToken = (req, res, next) => {
     req.token = token;
     next();
   } else {
-    res.sendStatus(403);
+    res.sendStatus(httpStatus.FORBIDDEN);
   }
 }
 
 exports.authenticate = (req, res) => {
   jwt.verify(req.token, process.env.SECRET_TOKEN, async (err, userData) => {
     if(err) {
-      res.status(401).json({response: 'Unauthorised access'});
+      res.status(httpStatus.UNAUTHORIZED).json({response: 'Unauthorised access'});
     } else {
       const { email } = userData;
       try {
         let user = await User.findOne({ email });
-        return res.status(200).send({ success: true, userID: user._id, token: req.token })
+        return res.status(httpStatus.OK).send({ success: true, userID: user._id, token: req.token })
       } catch (e) {
-        res.status(401).json({ response: 'Unauthorised access' });
+        res.status(httpStatus.UNAUTHORIZED).json({ response: 'Unauthorised access' });
       }
     }
   })
@@ -122,13 +123,13 @@ exports.resetPassword = (req, res) => {
 
   //Check Validation
   if (!isValid) {
-    return res.status(400).send({ response: errors })
+    return res.status(httpStatus.BAD_REQUEST).send({ response: errors })
   }
 
   const { old_password, new_password } = req.body;
   jwt.verify(req.token, process.env.SECRET_TOKEN, async (err, userData) => {
     if (err) {
-      res.status(401).json({ response: 'Unauthorised access' });
+      res.status(httpStatus.UNAUTHORIZED).json({ response: 'Unauthorised access' });
     } else {
       const { email } = userData;
       try {
@@ -139,15 +140,15 @@ exports.resetPassword = (req, res) => {
             let hashedPassword = await bcrypt.hash(new_password, 10)
             user.password = hashedPassword;
             user = await user.save()
-            return res.status(200).send({ success: true, response: 'Password successfully reset' })
+            return res.status(httpStatus.OK).send({ success: true, response: 'Password successfully reset' })
           } else {
-            res.status(403).send({ response: 'Incorrect old password' });
+            res.status(httpStatus.FORBIDDEN).send({ response: 'Incorrect old password' });
           }
         } else {
           let hashedPassword = await bcrypt.hash(new_password, 10)
           user.password = hashedPassword;
           user = await user.save();
-          return res.status(200).send({ success: true, response: 'Password successfully reset' })
+          return res.status(httpStatus.OK).send({ success: true, response: 'Password successfully reset' })
         }
       } catch (e) {
 
@@ -161,7 +162,7 @@ exports.reset = async (req, res) => {
 
   //Check Validation
   if (!isValid) {
-    return res.status(400).send({ response: errors })
+    return res.status(httpStatus.BAD_REQUEST).send({ response: errors })
   }
 
   const {email} = req.body;
@@ -169,7 +170,7 @@ exports.reset = async (req, res) => {
 
   User.findOne({ email }, function(err, user) {
     if (!user) {
-      return res.status(400).send({ response: 'No account with that email address exists.' })
+      return res.status(httpStatus.BAD_REQUEST).send({ response: 'No account with that email address exists.' })
     }
     else {
       user.resetPasswordToken = token;
@@ -177,7 +178,7 @@ exports.reset = async (req, res) => {
 
       const url = `${req.headers.host}/v1/change-password/${token}`;
       user.save((err, data) => {
-        res.status(200).send({ success: true, url })
+        res.status(httpStatus.OK).send({ success: true, url })
       })
     }
   });
@@ -188,7 +189,7 @@ exports.changePassword = function(req, res) {
 
   //Check Validation
   if (!isValid) {
-    return res.status(400).send({ response: errors })
+    return res.status(httpStatus.BAD_REQUEST).send({ response: errors })
   }
 
   const {password} = req.body;
@@ -196,17 +197,17 @@ exports.changePassword = function(req, res) {
 
   User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
     if(err){
-      return res.status(400).send({ response: 'Error changing password' })
+      return res.status(httpStatus.BAD_REQUEST).send({ response: 'Error changing password' })
     }
 
     if (!user) {
-      return res.status(400).send({ response: 'Password reset token is invalid or has expired.' })
+      return res.status(httpStatus.BAD_REQUEST).send({ response: 'Password reset token is invalid or has expired.' })
     }
 
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(password, salt, (err, hash) => {
         if (err) {
-          return res.status(400).send({ response: 'Error changing password' })
+          return res.status(httpStatus.BAD_REQUEST).send({ response: 'Error changing password' })
         }
 
         user.resetPasswordToken = null;
@@ -214,7 +215,7 @@ exports.changePassword = function(req, res) {
         user.password = hash
 
         user.save((err, data) => {
-          res.status(200).send({ success: true, response: 'Password changed' })
+          res.status(httpStatus.OK).send({ success: true, response: 'Password changed' })
         })
       })
     })
