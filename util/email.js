@@ -1,27 +1,11 @@
-const nodemailer = require('nodemailer')
+
+const sgMail = require('@sendgrid/mail');
 require('dotenv').config()
+
+sgMail.setApiKey(process.env.SENDGRID_API);
 
 exports.sendMail = (to, subject, msg) => {
     return new Promise((resolve, reject) => {
-        const smtpTransport = nodemailer.createTransport({
-            host: process.env.MAIL_HOST,
-            port: process.env.MAIL_PORT,
-            secure: false,
-            auth: {
-                user: process.env.MAIL_USERNAME, // generated ethereal user
-                pass: process.env.MAIL_PASSWORD, // generated ethereal password
-            }
-        });
-  
-        smtpTransport.verify(function(error, success) {
-            if (error) {
-                console.log(error);
-                reject(error);
-            } else {
-                console.log("Server is ready to take our messages");
-            }
-        });
-  
         const mailOptions = {
             from: '"Team Avengers 👻" <dasther@outlook.com>',
             to: to,
@@ -30,7 +14,7 @@ exports.sendMail = (to, subject, msg) => {
             html: msg
         };
   
-        smtpTransport.sendMail(mailOptions, (err) => {
+        sgmail.send(mailOptions, (err) => {
             if(err){
                 reject(err);
             }
