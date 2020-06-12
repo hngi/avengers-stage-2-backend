@@ -2,9 +2,10 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const swaggerUI = require('swagger-ui-express');
-const swaggerDocument = require('./docs/swagger.json');
-const cors = require('cors');
-require('dotenv').config();
+const frontendSwaggerDocument = require('./docs/frontend-swagger.json');
+const backendSwaggerDocument = require('./docs/backend-swagger copy.json')
+const cors = require('cors')
+require('dotenv').config()
 
 //Call in the routes
 const users = require('./routers/users.route');
@@ -36,7 +37,11 @@ app.use(express.urlencoded({ extended: false }));
 app.get('/', (req, res) => {
   res.redirect('/api-docs');
 });
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+app.get('/backend', (req, res) => {
+  res.redirect('/backend-api-docs');
+});
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(frontendSwaggerDocument));
+app.use('/backend-api-docs', swaggerUI.serve, swaggerUI.setup(backendSwaggerDocument));
 app.use('/v1', users);
 
 //open the port
