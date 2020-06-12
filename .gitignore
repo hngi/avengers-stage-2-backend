@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+node_modules
+package-lock.json
+store.txt
+.env
+data
+=======
 
 node_modules
 .DS_Store
@@ -14,9 +21,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 yarn.lock
-README.md
 package-lock.json
 
 # Environment files
 .env
 .env.local
+>>>>>>> initialize project with docker and docker-composer and a /api/hello route

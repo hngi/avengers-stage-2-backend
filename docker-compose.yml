@@ -1,3 +1,22 @@
+<<<<<<< HEAD
+version: "2"
+services:
+  app:
+    container_name: avengers-auth-task
+    restart: always
+    build: .
+    ports:
+      - "5000:3000"
+    links:
+      - mongo
+  mongo:
+    container_name: avengers-mongo
+    image: mongo
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "5100:27017"
+=======
 version: "3"
 services:
   authms:
@@ -11,9 +30,5 @@ services:
       - JWT_SECRET=$JWT_SECRET
       - DB_URL=$DB_URL
     ports:
-      - 3000:3000
-   mongodb:
-    container_name: mongodb
-    image: mongo
-    ports: 
-      -27017
+      - 80:3050
+>>>>>>> initialize project with docker and docker-composer and a /api/hello route
