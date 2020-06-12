@@ -8,7 +8,7 @@ S/N ||  SLACK USERNAME  ||       SLACK EMAIL ADDRESS              ||  TASK
 4       lasunkanmi          olaoluwabenjamin99@gmail.com              Assited in implementing Sign in function
 5       Horlahjummy         haonatararomi@gmail.com                   Designed the Sign Up email template
 6       Est33y              esteey22@gmail.com                        Designed the Sign In email template
-7
+7       Khalid.Adekunle     adekunlekhalid@gmail.com                  Assisted in implementing the Sign Up function
 8
 9
 10
