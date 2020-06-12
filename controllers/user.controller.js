@@ -282,7 +282,6 @@ exports.forgotPassword = async (req, res) => {
       message: "kindly check your email for a password reset link",
     });
   } catch (err) {
-    console.log(err);
     res.status(500).send({ message: err.message });
   }
 };
