@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const passwordHash = require("./passwordPlugin");
 
 const Schema = mongoose.Schema;
 
@@ -15,4 +16,6 @@ const userSchema = new Schema({
   resetPasswordExpires: Date
 });
 
-module.exports = User = mongoose.model('users', userSchema);
+userSchema.plugin(passwordHash);
+
+module.exports = User = mongoose.model("users", userSchema);

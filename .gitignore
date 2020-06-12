@@ -1,5 +1,29 @@
+<<<<<<< HEAD
 node_modules
 package-lock.json
 store.txt
 .env
 data
+=======
+
+node_modules
+.DS_Store
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+package-lock.json
+
+# Environment files
+.env
+.env.local
+>>>>>>> initialize project with docker and docker-composer and a /api/hello route
