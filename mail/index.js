@@ -4,6 +4,8 @@
 
 
 const sendGrid = require('@sendgrid/mail');
+const signupHtml = require("./signupEmailTemplate");
+const signinHtml = require("./signinEmailTemplate");
 // const dateFormat = require('dateformat');
 
 sendGrid.setApiKey(process.env.SENDGRID_APIKEY);
@@ -17,7 +19,7 @@ module.exports = {
       to: emailAddr,
       from: process.env.SENDER_EMAIL, // optional
       subject: subject,
-      text: msg
+      html: signupHtml.getBody(msg)
 
     }
     console.log('sending....')
@@ -37,7 +39,7 @@ module.exports = {
       to: emailAddr,
       from: process.env.SENDER_EMAIL,
       subject: 'USER SIGNED IN TO AVENGERS APP',
-      text: 'Hello, \nYou just signed into your account at \n Best Regards! ',
+      html: signinHtml.getBody("You just signed in"),
      
     };
     return new Promise((resolve, reject) => {
