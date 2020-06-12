@@ -62,20 +62,18 @@ exports.getGoogleAccountFromCode = async (req, res) => {
     const email = me.data.emailAddresses && me.data.emailAddresses.length && me.data.emailAddresses[0].value;
     try {
         let user = await User.findOne({ email });
-        if (user){
-            return res.status(200).send({
-                success: true,
-                userID: used._id,
-                token: TokenUtil.signedJWT(email)
-            })
-        } else {
+        if (!user) {
             const newUser = new User({
                 email,
                 googleId
             });
             user = await newUser.save();
-            res.status(200).send({ success: true, userID: used._id, token: TokenUtil.signedJWT(email)});
-        }             
+        }
+        return res.status(200).send({
+            success: true,
+            userID: user._id,
+            token: TokenUtil.signedJWT(email)
+        });           
     } catch (e) {
         res.status(400).send({response: "Error signing you in"});
     }
