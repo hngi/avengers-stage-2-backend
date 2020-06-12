@@ -4,24 +4,20 @@ const isEmpty = require('./isEmpty')
 module.exports = function validateChangeInput (data) {
   let errors = {}
 
-  data.password = !isEmpty(data.password) ? data.password : ''
-  data.confirmPassword = !isEmpty(data.confirmPassword)
-    ? data.confirmPassword
-    : ''
+  for (const param in data) {
+    data[param] = data[param].trim()
+  }
+  const { password, confirmPassword } = data;
 
-  if (Validator.isEmpty(data.password)) {
+  if (!password || Validator.isEmpty(password)) {
     errors.password = 'Password is required'
+  } else if (!Validator.isLength(password, { min: 6, max: 30 })) {
+    errors.password = 'Password must be between 6 and 30 characters'
   }
 
-  if (!Validator.isLength(data.password, { min: 6, max: 30 })) {
-    errors.password = 'Password must be more than 5 characters'
-  }
-
-  if (Validator.isEmpty(data.confirmPassword)) {
+  if (!confirmPassword || Validator.isEmpty(confirmPassword)) {
     errors.confirmPassword = 'Please confirm password'
-  }
-
-  if (!Validator.equals(data.password, data.confirmPassword)) {
+  } else if (!Validator.equals(password, confirmPassword)) {
     errors.confirmPassword = 'Password must match'
   }
 

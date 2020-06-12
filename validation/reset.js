@@ -2,25 +2,24 @@ const Validator = require('validator')
 const isEmpty = require('./isEmpty')
 
 module.exports = function validateResetInput (data) {
-  let errors = {}
+    let errors = {}
 
-    data.new_password = !isEmpty(data.new_password) ? data.new_password : ''
-    data.confirm_password = !isEmpty(data.confirm_password) ? data.confirm_password: ''
-
-    if (Validator.isEmpty(data.new_password)) {
-        errors.new_password = 'New Password is required'
+    for (const param in data) {
+        data[param] = data[param].trim()
     }
 
-    if (Validator.isEmpty(data.confirm_password)) {
-        errors.confirm_password = 'Please confirm new password'
+    const { new_password, confirm_password } = data;
+
+    if (!new_password || Validator.isEmpty(new_password)) {
+        errors.new_password = 'Password is required'
+    } else if (!Validator.isLength(new_password, { min: 6, max: 30 })) {
+        errors.new_password = 'Password must be between 6 and 30 characters'
     }
 
-    if (!Validator.isLength(data.new_password, { min: 6, max: 30 })) {
-        errors.password = 'Password must be more than 5 characters'
-    }
-
-    if (!Validator.equals(data.new_password, data.confirm_password)) {
-        errors.confirm_password = 'New password must match'
+    if (!confirm_password || Validator.isEmpty(confirm_password)) {
+        errors.confirm_password = 'Please confirm password'
+    } else if (!Validator.equals(new_password, confirm_password)) {
+        errors.confirm_password = 'Password must match'
     }
 
     return {

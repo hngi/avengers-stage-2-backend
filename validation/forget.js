@@ -4,14 +4,16 @@ const isEmpty = require('./isEmpty')
 module.exports = function validateForgetInput (data) {
   let errors = {}
 
-    data.email = !isEmpty(data.email) ? data.email : ''
-
-    if (Validator.isEmpty(data.email)) {
-        errors.old_password = 'Email address is required'
+    for (const param in data) {
+        data[param] = data[param].trim()
     }
 
-    if (!Validator.isEmail(data.email)) {
-        errors.email = 'Email address is invalid'
+    const { email } = data;
+    
+    if (!email || Validator.isEmpty(email)) {
+        errors.email = 'Email field is required'
+    } else if (!Validator.isEmail(email)) {
+        errors.email = 'Email is invalid'
     }
 
     return {
