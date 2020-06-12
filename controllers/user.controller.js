@@ -1,11 +1,15 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const User = require('../models/user.model')
+const TokenUtil = require('../util/token')
 require('dotenv').config()
 
 //Load Input Validation
 const validateRegisterInput = require('../validation/register')
 const validateLoginInput = require('../validation/login')
+const validateResetInput = require('../validation/reset')
+const validateForgetInput = require('../validation/forget')
+const validateChangeInput = require('../validation/change')
 
 exports.registerUser = (req, res, next) => {
   const { errors, isValid } = validateRegisterInput(req.body)
@@ -32,10 +36,14 @@ exports.registerUser = (req, res, next) => {
           newUser.password = hash
           newUser
             .save()
-            .then(user =>
-              res
-                .status(200)
-                .send({ success: true, data: user })
+            .then(user =>{
+                // const msg = `<b>Hello ${user.email}<b><br /><p> Thank you for registering with us</p><br /> <p><i> Team Avengers </i></p>`
+                // MailerUtil.sendMail(user.email, 'Registration Successful', msg ).then((e) => {
+                //   res.status(200).send({ success: true, data: user })
+                // }).catch(() => {
+                  res.status(200).send({ success: true, data: user })
+                // })
+              }
             )
             .catch(err => console.log(err))
         })
@@ -67,18 +75,12 @@ exports.loginUser = (req, res, next) => {
           return res.status(403).send({ response: 'Incorrect username or password' })
         }
 
-        const token = jwt.sign(
-          {
-            email
-          },
-          process.env.SECRET_TOKEN,
-          {
-            expiresIn: '4800s'
-          }
-        )
+        const userID = user._id;
+        const token = TokenUtil.signedJWT(email);
 
         return res.status(200).send({
           success: true,
+          userID,
           token
         })
       })
@@ -99,27 +101,124 @@ exports.checkToken = (req, res, next) => {
   }
 }
 
-exports.resetPassword = (req, res) => {
-  const {old_password, new_password, confirm_password} = req.body;
-  jwt.verify(req.token, 'secrettoken', (err, userData) => {
+exports.authenticate = (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_TOKEN, async (err, userData) => {
     if(err) {
-      res.status(403).json({response: 'Unable to reset password'});
+      res.status(401).json({response: 'Unauthorised access'});
     } else {
-      const {email} = userData;
-      User.findOne({email}, (err, user) => {
-        bcrypt.compare(req.body.old_password, user.password, function(err, result) {
-          
-          if (!result) return res.status(403).send({response: 'Incorrect password'});
-          if (new_password !== confirm_password) return res.status(403).send({ response: 'Passwords do not match.' })
-          bcrypt.hash(new_password, 10, (err, pwHash) => {
-            if(err) throw err;
-            user.password = pwHash;
-            user.save((err, data) => {
-              return res.status(200).send({ success: true, response: 'Password successfully reset'})
-            })
-          })
-        })
-      })
+      const { email } = userData;
+      try {
+        let user = await User.findOne({ email });
+        return res.status(200).send({ success: true, userID: user._id, token: req.token })
+      } catch (e) {
+        res.status(401).json({ response: 'Unauthorised access' });
+      }
     }
   })
+}
+
+exports.resetPassword = (req, res) => {
+  const { errors, isValid } = validateResetInput(req.body)
+
+  //Check Validation
+  if (!isValid) {
+    return res.status(400).send({ response: errors })
+  }
+
+  const { old_password, new_password } = req.body;
+  jwt.verify(req.token, process.env.SECRET_TOKEN, async (err, userData) => {
+    if (err) {
+      res.status(401).json({ response: 'Unauthorised access' });
+    } else {
+      const { email } = userData;
+      try {
+        let user = await User.findOne({ email });
+        if (!user.password) {
+          let isPasswordMatched = await bcrypt.compare(old_password, user.password)
+          if (isPasswordMatched) {
+            let hashedPassword = await bcrypt.hash(new_password, 10)
+            user.password = hashedPassword;
+            user = await user.save()
+            return res.status(200).send({ success: true, response: 'Password successfully reset' })
+          } else {
+            res.status(403).send({ response: 'Incorrect old password' });
+          }
+        } else {
+          let hashedPassword = await bcrypt.hash(new_password, 10)
+          user.password = hashedPassword;
+          user = await user.save();
+          return res.status(200).send({ success: true, response: 'Password successfully reset' })
+        }
+      } catch (e) {
+
+      }
+    }
+  })
+}
+
+exports.reset = async (req, res) => {
+  const { errors, isValid } = validateForgetInput(req.body)
+
+  //Check Validation
+  if (!isValid) {
+    return res.status(400).send({ response: errors })
+  }
+
+  const {email} = req.body;
+  const token = await TokenUtil.generateEmailToken(email);
+
+  User.findOne({ email }, function(err, user) {
+    if (!user) {
+      return res.status(400).send({ response: 'No account with that email address exists.' })
+    }
+    else {
+      user.resetPasswordToken = token;
+      user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+      const url = `${req.headers.host}/api/v1/change-password/${token}`;
+      console.log(url);
+
+      user.save((err, data) => {
+        res.status(200).send({ success: true, url, msg })
+      })
+    }
+  });
+}
+
+exports.changePassword = function(req, res) {
+  const { errors, isValid } = validateChangeInput(req.body)
+
+  //Check Validation
+  if (!isValid) {
+    return res.status(400).send({ response: errors })
+  }
+
+  const {password} = req.body;
+  const {token} = req.params;
+
+  User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
+    if(err){
+      return res.status(400).send({ response: 'Error changing password' })
+    }
+
+    if (!user) {
+      return res.status(400).send({ response: 'Password reset token is invalid or has expired.' })
+    }
+
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(password, salt, (err, hash) => {
+        if (err) {
+          return res.status(400).send({ response: 'Error changing password' })
+        }
+
+        user.resetPasswordToken = null;
+        user.resetPasswordExpires = null;
+        user.password = hash
+
+        user.save((err, data) => {
+          res.status(200).send({ success: true, response: 'Password changed' })
+        })
+      })
+    })
+  }) 
 }

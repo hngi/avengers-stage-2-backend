@@ -1,23 +1,26 @@
-const google = require('googleapis');
+const {google} = require('googleapis')
 require('dotenv').config()
-const jwt = require('jsonwebtoken')
+const TokenUtil = require('../util/token')
+const User = require('../models/user.model')
+const OAuth2Client =google.auth.OAuth2
 
 //Config google api
 const googleConfig = {
-    clientId: '585502711890-ubdghi2or9gqf6s0h5utr3o9d4ald3e2.apps.googleusercontent.com', 
-    clientSecret: 'K3-Aa2dzRO-SgWaRmSvx8MCt',
-    redirect: 'localhost:3000/google-signin',
+    clientId: process.env.GOOGLE_CLIENT_ID, 
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    redirect: process.env.GOOGLE_REDIRECT_URL,
 };
 
 //Google Scope
 const defaultScope = [
+    'https://www.googleapis.com/auth/userinfo.profile',
     'https://www.googleapis.com/auth/plus.me',
     'https://www.googleapis.com/auth/userinfo.email',
 ];
 
 //Initializing connection to google OAuth2
 function createConnection() {
-    return new google.auth.OAuth2(
+    return new OAuth2Client(
         googleConfig.clientId,
         googleConfig.clientSecret,
         googleConfig.redirect
@@ -33,43 +36,47 @@ function getConnectionUrl(auth) {
 }
 
 function getGooglePlusApi(auth) {
-    return google.plus({ version: 'v1', auth });
+    return google.people({ version: 'v1', auth});
 }
 
 //Generate a google URL
 exports.urlGoogle = (req, res) => {
     const auth = createConnection();
     const url = getConnectionUrl(auth);
-    res.status(201).send({msg: 'Copy login url', url})
+    res.status(201).send({success: true, response: url})
 }
 
 //response from login
 exports.getGoogleAccountFromCode = async (req, res) => {
-    const data = await auth.getToken(req.body.code);
-    const tokens = data.tokens;
     const auth = createConnection();
+    const data = await auth.getToken(req.query.code);
+    const tokens = data.tokens;
+    
     auth.setCredentials(tokens);
     const plus = getGooglePlusApi(auth);
-    const me = await plus.people.get({ userId: 'me' });
-    // const userGoogleId = me.data.id;
-    const userGoogleEmail = me.data.emails && me.data.emails.length && me.data.emails[0].value;
-    const token = jwt.sign(
-        {
-            email: userGoogleEmail
-        },
-        process.env.SECRET_TOKEN,
-        {
-            expiresIn: '4800s'
-        }
-    )
-
-    return res.status(200).send({
-        success: true,
-        token
-    })
-    // return {
-    //     id: userGoogleId,
-    //     email: userGoogleEmail,
-    //     tokens: tokens,
-    // };
+    const me = await plus.people.get({
+        resourceName: 'people/me',
+        personFields: 'emailAddresses,names'
+    });
+    const googleId = me.data.resourceName.split('/')[1];
+    const email = me.data.emailAddresses && me.data.emailAddresses.length && me.data.emailAddresses[0].value;
+    try {
+        let user = await User.findOne({ email });
+        if (user){
+            return res.status(200).send({
+                success: true,
+                userID: used._id,
+                token: TokenUtil.signedJWT(email)
+            })
+        } else {
+            const newUser = new User({
+                email,
+                googleId
+            });
+            user = await newUser.save();
+            res.status(200).send({ success: true, userID: used._id, token: TokenUtil.signedJWT(email)});
+        }             
+    } catch (e) {
+        res.status(400).send({response: "Error signing you in"});
+    }
 }
