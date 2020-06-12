@@ -175,9 +175,7 @@ exports.reset = async (req, res) => {
       user.resetPasswordToken = token;
       user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
-      const url = `${req.headers.host}/api/v1/change-password/${token}`;
-      console.log(url);
-
+      const url = `${req.headers.host}/v1/change-password/${token}`;
       user.save((err, data) => {
         res.status(200).send({ success: true, url })
       })
