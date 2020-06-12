@@ -1,4 +1,5 @@
-const {google} = require('googleapis')
+const {google} = require('googleapis');
+const httpStatus = require('http-status-codes');
 require('dotenv').config()
 const TokenUtil = require('../util/token')
 const User = require('../models/user.model')
@@ -43,7 +44,7 @@ function getGooglePlusApi(auth) {
 exports.urlGoogle = (req, res) => {
     const auth = createConnection();
     const url = getConnectionUrl(auth);
-    res.status(201).send({success: true, response: url})
+    res.status(httpStatus.CREATED).send({success: true, response: url})
 }
 
 //response from login
@@ -69,12 +70,12 @@ exports.getGoogleAccountFromCode = async (req, res) => {
             });
             user = await newUser.save();
         }
-        return res.status(200).send({
+        return res.status(httpStatus.OK).send({
             success: true,
             userID: user._id,
             token: TokenUtil.signedJWT(email)
         });           
     } catch (e) {
-        res.status(400).send({response: "Error signing you in"});
+        res.status(httpStatus.BAD_REQUEST).send({response: "Error signing you in"});
     }
 }
