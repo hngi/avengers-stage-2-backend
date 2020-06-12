@@ -179,7 +179,7 @@ exports.reset = async (req, res) => {
       console.log(url);
 
       user.save((err, data) => {
-        res.status(200).send({ success: true, url, msg })
+        res.status(200).send({ success: true, url })
       })
     }
   });
