@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
+const MailerUtil = require("../mail/index");
 const TokenUtil = require("../util/token");
 require("dotenv").config();
 

@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const swaggerUI = require("swagger-ui-express");
-const swaggerDocument = require("./docs/swagger.json");
 const cors = require("cors");
+const swaggerDocument = require("./docs/swagger.json");
 require("dotenv").config();
 
 //Call in the routes
