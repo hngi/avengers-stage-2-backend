@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const route = require('express').Router()
 
 const UserController = require('../controllers/user.controller')
 const GoogleController = require('../controllers/google.controller')
@@ -27,4 +28,4 @@ router.post('/forgot-password', UserController.reset)
 router.get('/google/callback', GoogleController.getGoogleAccountFromCode);
 router.post('/change-password/:token', UserController.changePassword)
 
-module.exports = router
+module.exports = { route, router }
