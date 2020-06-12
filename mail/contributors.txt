@@ -3,12 +3,12 @@ HERE IS THE LIST OF CONTRIBUTORS TO MAIL UTIL
 S/N ||  SLACK USERNAME  ||       SLACK EMAIL ADDRESS              ||
 =========================================================================
 1       Hackinwale          hackinwale.developer@gmail.com 
-2
-3
-4
-5
-6
-7
+2       Marvel              fmarvelsk@gmail.com
+3       ijustice            idrisjustice21@gmail.com
+4       grenalyn            jakazzy@gmail.com
+5       jboy                adejareemma@gmail.com
+6       DevDre              damidipo@gmail.com
+7       skiddos             festus75@yahoo.com
 8
 9
 10
