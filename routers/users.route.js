@@ -24,7 +24,7 @@ router.post('/reset-password', UserController.checkToken, UserController.resetPa
 router.get('/google/signin', GoogleController.urlGoogle);
 router.post('/forgot-password', UserController.reset)
 
-// Strictly backend routes
+// Strictly the backend routes
 router.get('/google/callback', GoogleController.getGoogleAccountFromCode);
 router.post('/change-password/:token', UserController.changePassword)
 
